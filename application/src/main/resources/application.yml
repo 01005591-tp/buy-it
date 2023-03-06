@@ -1,0 +1,10 @@
+quarkus:
+  datasource:
+    jdbc: false
+  http:
+    port: 4000
+
+"%local%":
+  quarkus:
+    http:
+      port: 4000
