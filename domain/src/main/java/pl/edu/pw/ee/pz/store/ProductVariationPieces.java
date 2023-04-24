@@ -27,12 +27,12 @@ public final class ProductVariationPieces implements FluentComparable<ProductVar
     }
   }
 
-  public ProductVariationPieces add(ProductVariationPieces other) {
-    return new ProductVariationPieces(count + other.count());
+  public ProductVariationPieces add(ProductVariationPieces augend) {
+    return new ProductVariationPieces(count + augend.count());
   }
 
-  public ProductVariationPieces remove(ProductVariationPieces other) {
-    return new ProductVariationPieces(count - other.count());
+  public ProductVariationPieces subtract(ProductVariationPieces subtrahend) {
+    return new ProductVariationPieces(count - subtrahend.count());
   }
 
   public boolean isNone() {

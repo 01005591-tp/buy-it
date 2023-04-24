@@ -1,6 +1,7 @@
 package pl.edu.pw.ee.pz.store.error;
 
-import pl.edu.pw.ee.pz.store.ProductVariation.VariationId;
+import pl.edu.pw.ee.pz.sharedkernel.event.AggregateId;
+import pl.edu.pw.ee.pz.sharedkernel.model.ProductVariation.VariationId;
 
 public class ProductVariationAlreadyExistsException extends RuntimeException {
 
@@ -8,10 +9,10 @@ public class ProductVariationAlreadyExistsException extends RuntimeException {
     super(message);
   }
 
-  public static ProductVariationAlreadyExistsException alreadyExists(VariationId variation) {
-    return new ProductVariationAlreadyExistsException(
-        "Product %s already exists".formatted(variation.value().toString())
-    );
+  public static ProductVariationAlreadyExistsException alreadyExists(AggregateId productId, VariationId variation) {
+    return new ProductVariationAlreadyExistsException("Product variation %s already exists for product %s.".formatted(
+        variation.value().toString(), productId.value().toString()
+    ));
   }
 
 }

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>pl.edu.pw.ee.pz</groupId>
+    <artifactId>buy-it</artifactId>
+    <version>0.0.0</version> <!-- Managed by JGitVer -->
+  </parent>
+
+  <artifactId>infrastructure</artifactId>
+
+  <dependencies>
+    <!-- Internal -->
+    <dependency>
+      <groupId>pl.edu.pw.ee.pz</groupId>
+      <artifactId>domain</artifactId>
+    </dependency>
+    <!-- Internal -->
+    <dependency>
+      <groupId>pl.edu.pw.ee.pz</groupId>
+      <artifactId>service</artifactId>
+    </dependency>
+
+    <!-- Quarkus -->
+    <!-- Liquibase -->
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-liquibase</artifactId>
+    </dependency>
+    <!-- Required by liquibase -->
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-jdbc-postgresql</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-reactive-pg-client</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-arc</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-smallrye-reactive-messaging-kafka</artifactId>
+    </dependency>
+
+    <!-- Others -->
+    <dependency>
+      <groupId>com.eventstore</groupId>
+      <artifactId>db-client-java</artifactId>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>io.smallrye</groupId>
+        <artifactId>jandex-maven-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </build>
+</project>

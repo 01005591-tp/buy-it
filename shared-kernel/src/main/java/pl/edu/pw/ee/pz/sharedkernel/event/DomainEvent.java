@@ -2,12 +2,13 @@ package pl.edu.pw.ee.pz.sharedkernel.event;
 
 import pl.edu.pw.ee.pz.sharedkernel.model.Timestamp;
 
-public interface DomainEvent {
+public interface DomainEvent<ID extends AggregateId> {
 
-  DomainEventHeader eventHeader();
+  DomainEventHeader<ID> header();
 
-  record DomainEventHeader(
+  record DomainEventHeader<ID extends AggregateId>(
       EventId id,
+      ID aggregateId,
       Timestamp timestamp
   ) {
 

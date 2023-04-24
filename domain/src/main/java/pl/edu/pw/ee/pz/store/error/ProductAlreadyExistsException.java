@@ -1,6 +1,6 @@
 package pl.edu.pw.ee.pz.store.error;
 
-import pl.edu.pw.ee.pz.store.Product.ProductId;
+import pl.edu.pw.ee.pz.sharedkernel.event.AggregateId;
 
 public class ProductAlreadyExistsException extends RuntimeException {
 
@@ -8,7 +8,7 @@ public class ProductAlreadyExistsException extends RuntimeException {
     super(message);
   }
 
-  public static ProductAlreadyExistsException alreadyExists(ProductId id) {
+  public static ProductAlreadyExistsException alreadyExists(AggregateId id) {
     return new ProductAlreadyExistsException(
         "Product %s already exists".formatted(id.value().toString())
     );

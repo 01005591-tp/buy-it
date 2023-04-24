@@ -1,10 +1,94 @@
 quarkus:
   datasource:
+    db-kind: postgresql
     jdbc: false
-  http:
-    port: 4000
+  index-dependency:
+    infrastructure:
+      group-id: pl.edu.pw.ee.pz
+      artifact-id: infrastructure
+    service:
+      group-id: pl.edu.pw.ee.pz
+      artifact-id: service
+    external-service-adapter:
+      group-id: pl.edu.pw.ee.pz
+      artifact-id: external-service-adapter
+  liquibase:
+    change-log: db/changelog/changelog.xml
+    migrate-at-start: true
+mp:
+  messaging:
+    incoming:
+      domain-events-in:
+        connector: smallrye-kafka
+        topic: domain-events
+        key:
+          deserializer: org.apache.kafka.common.serialization.StringDeserializer
+        value:
+          deserializer: org.apache.kafka.common.serialization.ByteArrayDeserializer
+        batch: true
+        auto:
+          offset:
+            reset: earliest
+        enable:
+          auto:
+            commit: false
+        commit-strategy: ignore
+        broadcast: true
+        group:
+          id: ${quarkus.uuid}
+    outgoing:
+      domain-events-out:
+        connector: smallrye-kafka
+        topic: domain-events
+        key:
+          serializer: org.apache.kafka.common.serialization.StringSerializer
+        value:
+          serializer: org.apache.kafka.common.serialization.ByteArraySerializer
+eventstore:
+  db:
+    uri: "esdb://localhost"
+domain-events:
+  publish-timeout: PT1S
+  backoff-timeout: PT0.3S
+  max-retries: 3
+minio:
+  client:
+    uri: "http://localhost"
+    access-key: "access-key"
+    secret-key: "secret-key"
 
 "%local%":
   quarkus:
     http:
       port: 4000
+    datasource:
+      db-kind: postgres
+      username: buy_it
+      password: buy_it
+      reactive:
+        url: postgresql://192.168.49.2:30432/buy-it
+    kafka:
+      bootstrap:
+        servers: kafka:9092
+
+  eventstore:
+    db:
+      uri: ""
+
+"%prod%":
+  quarkus:
+    http:
+      port: 4000
+    datasource:
+      db-kind: postgres
+      username: buy_it
+      password: buy_it
+      reactive:
+        url: postgresql://192.168.49.2:30432/buy-it
+    kafka:
+      bootstrap:
+        servers: kafka:9092
+
+  eventstore:
+    db:
+      uri: ""

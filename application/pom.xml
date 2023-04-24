@@ -23,6 +23,18 @@
       <groupId>pl.edu.pw.ee.pz</groupId>
       <artifactId>shared-kernel</artifactId>
     </dependency>
+    <dependency>
+      <groupId>pl.edu.pw.ee.pz</groupId>
+      <artifactId>service</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>pl.edu.pw.ee.pz</groupId>
+      <artifactId>infrastructure</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>pl.edu.pw.ee.pz</groupId>
+      <artifactId>external-service-adapter</artifactId>
+    </dependency>
 
     <!-- Quarkus -->
     <dependency>
@@ -31,23 +43,22 @@
     </dependency>
     <dependency>
       <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-vertx-graphql</artifactId>
+      <artifactId>quarkus-smallrye-graphql</artifactId>
     </dependency>
     <dependency>
       <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-liquibase</artifactId>
+      <artifactId>quarkus-resteasy-reactive</artifactId>
     </dependency>
-    <dependency>
-      <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-reactive-pg-client</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-arc</artifactId>
-    </dependency>
+
     <dependency>
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-config-yaml</artifactId>
+    </dependency>
+
+    <!-- Others -->
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
     </dependency>
 
     <!-- Test -->
@@ -60,6 +71,25 @@
       <groupId>org.assertj</groupId>
       <artifactId>assertj-core</artifactId>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.rest-assured</groupId>
+      <artifactId>rest-assured</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.testcontainers</groupId>
+      <artifactId>testcontainers</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.awaitility</groupId>
+      <artifactId>awaitility</artifactId>
     </dependency>
   </dependencies>
 

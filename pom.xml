@@ -11,6 +11,10 @@
     <module>shared-kernel</module>
     <module>domain</module>
     <module>application</module>
+    <module>infrastructure</module>
+    <module>service</module>
+    <module>external-service-domain</module>
+    <module>external-service-adapter</module>
   </modules>
 
   <properties>
@@ -27,6 +31,9 @@
     <lombok.version>1.18.26</lombok.version>
     <assertj.version>3.24.2</assertj.version>
     <snakeyaml.version>2.0</snakeyaml.version>
+    <eventstore-db-client-java.version>4.1.1</eventstore-db-client-java.version>
+    <minio.version>8.5.2</minio.version>
+    <okhttp.version>4.10.0</okhttp.version>
     <skipITs>true</skipITs>
     <surefire-plugin.version>3.0.0-M7</surefire-plugin.version>
   </properties>
@@ -46,7 +53,27 @@
       </dependency>
       <dependency>
         <groupId>pl.edu.pw.ee.pz</groupId>
+        <artifactId>external-service-adapter</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>pl.edu.pw.ee.pz</groupId>
+        <artifactId>external-service-domain</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>pl.edu.pw.ee.pz</groupId>
+        <artifactId>infrastructure</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>pl.edu.pw.ee.pz</groupId>
         <artifactId>application</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>pl.edu.pw.ee.pz</groupId>
+        <artifactId>service</artifactId>
         <version>${project.version}</version>
       </dependency>
 
@@ -70,6 +97,21 @@
         <artifactId>lombok</artifactId>
         <version>${lombok.version}</version>
         <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>com.eventstore</groupId>
+        <artifactId>db-client-java</artifactId>
+        <version>${eventstore-db-client-java.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.minio</groupId>
+        <artifactId>minio</artifactId>
+        <version>${minio.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.squareup.okhttp3</groupId>
+        <artifactId>okhttp</artifactId>
+        <version>${okhttp.version}</version>
       </dependency>
 
       <!-- Test -->
