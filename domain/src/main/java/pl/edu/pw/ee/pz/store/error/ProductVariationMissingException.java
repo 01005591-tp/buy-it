@@ -1,7 +1,7 @@
 package pl.edu.pw.ee.pz.store.error;
 
 import pl.edu.pw.ee.pz.sharedkernel.event.AggregateId;
-import pl.edu.pw.ee.pz.sharedkernel.model.ProductVariation.VariationId;
+import pl.edu.pw.ee.pz.sharedkernel.model.ProductVariation;
 
 public class ProductVariationMissingException extends RuntimeException {
 
@@ -9,9 +9,9 @@ public class ProductVariationMissingException extends RuntimeException {
     super(message);
   }
 
-  public static ProductVariationMissingException variationMissing(AggregateId productId, VariationId variation) {
+  public static ProductVariationMissingException variationMissing(AggregateId productId, ProductVariation variation) {
     return new ProductVariationMissingException(
-        "Variation %s not defined for product %s".formatted(variation.value().toString(), productId.value().toString())
+        "Variation not defined for product %s: %s".formatted(productId.value(), variation.toString())
     );
   }
 }

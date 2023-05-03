@@ -15,17 +15,15 @@ import pl.edu.pw.ee.pz.sharedkernel.event.AggregateId;
 import pl.edu.pw.ee.pz.sharedkernel.event.DomainEvent;
 import pl.edu.pw.ee.pz.sharedkernel.event.DomainEvent.DomainEventHeader;
 import pl.edu.pw.ee.pz.sharedkernel.event.DomainEvent.EventId;
-import pl.edu.pw.ee.pz.sharedkernel.model.BrandCode;
+import pl.edu.pw.ee.pz.sharedkernel.model.BrandId;
 import pl.edu.pw.ee.pz.sharedkernel.model.ProductCode;
 import pl.edu.pw.ee.pz.sharedkernel.model.ProductId;
 import pl.edu.pw.ee.pz.sharedkernel.model.ProductVariation;
-import pl.edu.pw.ee.pz.sharedkernel.model.ProductVariation.VariationId;
 import pl.edu.pw.ee.pz.sharedkernel.model.Timestamp;
 import pl.edu.pw.ee.pz.sharedkernel.model.VariationAttribute;
 import pl.edu.pw.ee.pz.sharedkernel.model.VariationAttribute.AttributeType;
 import pl.edu.pw.ee.pz.sharedkernel.model.VariationAttribute.AttributeValue;
 import pl.edu.pw.ee.pz.sharedkernel.model.Version;
-import pl.edu.pw.ee.pz.store.error.ProductVariationAlreadyExistsException;
 import pl.edu.pw.ee.pz.store.error.ProductVariationMissingException;
 
 class ProductAggregateTest {
@@ -34,7 +32,7 @@ class ProductAggregateTest {
   void should_create_new_product() {
     // given
     var productId = new ProductId(UUID.randomUUID());
-    var productBrand = new BrandCode("MIGHTY_BRAND");
+    var productBrand = new BrandId(UUID.randomUUID());
     var productCode = new ProductCode("MIGHTY_SHOES_LIMITED_EDITION");
 
     // when
@@ -56,7 +54,6 @@ class ProductAggregateTest {
     var product = newProduct();
     // and
     var productVariation = new ProductVariation(
-        new VariationId(UUID.randomUUID()),
         Set.of(
             new VariationAttribute(
                 new AttributeType("SIZE"),
@@ -79,20 +76,17 @@ class ProductAggregateTest {
     // then
     assertThat(product.variations())
         .hasSize(1)
-        .allSatisfy((variationId, variation) -> {
-          assertThat(variationId).isEqualTo(productVariation.id());
-          assertThat(variation.id()).isEqualTo(productVariation.id());
-          assertThat(variation.attributes()).containsExactlyInAnyOrderElementsOf(productVariation.attributes());
-        });
+        .allSatisfy(variation ->
+            assertThat(variation.attributes()).containsExactlyInAnyOrderElementsOf(productVariation.attributes())
+        );
   }
 
   @Test
-  void should_fail_adding_product_variation_when_such_already_exists() {
+  void should_skip_adding_product_variation_when_such_already_exists() {
     // given
     var product = newProduct();
     // and
     var productVariation = new ProductVariation(
-        new VariationId(UUID.randomUUID()),
         Set.of(
             new VariationAttribute(
                 new AttributeType("SIZE"),
@@ -112,15 +106,12 @@ class ProductAggregateTest {
     product.addVariation(productVariation);
 
     // when
-    var throwableAssert = assertThatCode(() -> product.addVariation(productVariation));
+    product.addVariation(productVariation);
 
     // then
-    throwableAssert
-        .isInstanceOf(ProductVariationAlreadyExistsException.class)
-        .hasMessage("Product variation %s already exists for product %s.".formatted(
-            productVariation.id().value().toString(),
-            product.id().value()
-        ));
+    assertThat(product.getAndClearPendingInEvents())
+        .filteredOn(it -> it instanceof ProductVariationAdded)
+        .hasSize(1);
   }
 
   @Test
@@ -128,18 +119,15 @@ class ProductAggregateTest {
     // given
     var product = newProduct();
     // and
-    var variationId = new VariationId(UUID.randomUUID());
+    var variation = new ProductVariation(Set.of());
 
     // when
-    var throwableAssert = assertThatCode(() -> product.removeVariation(variationId));
+    var throwableAssert = assertThatCode(() -> product.removeVariation(variation));
 
     // then
     throwableAssert
         .isInstanceOf(ProductVariationMissingException.class)
-        .hasMessage("Variation %s not defined for product %s".formatted(
-            variationId.value().toString(),
-            product.id().value()
-        ));
+        .hasMessage("Variation not defined for product %s: %s".formatted(product.id().value(), variation.toString()));
   }
 
   @Test
@@ -149,13 +137,12 @@ class ProductAggregateTest {
     var productCreated = new ProductCreated(
         newDomainEventHeader(productId),
         new ProductCode("MIGHTY_SHOES_LIMITED_EDITION"),
-        new BrandCode("MIGHTY_BRAND")
+        new BrandId(UUID.randomUUID())
     );
     // and
     var productVariation1Added = new ProductVariationAdded(
         newDomainEventHeader(productId),
         new ProductVariation(
-            new VariationId(UUID.randomUUID()),
             Set.of(
                 new VariationAttribute(
                     new AttributeType("SIZE"),
@@ -176,7 +163,6 @@ class ProductAggregateTest {
     var productVariation2Added = new ProductVariationAdded(
         newDomainEventHeader(productId),
         new ProductVariation(
-            new VariationId(UUID.randomUUID()),
             Set.of(
                 new VariationAttribute(
                     new AttributeType("SIZE"),
@@ -196,7 +182,7 @@ class ProductAggregateTest {
     // and
     var productVariation1Removed = new ProductVariationRemoved(
         newDomainEventHeader(productId),
-        productVariation1Added.productVariation().id()
+        productVariation1Added.productVariation()
     );
     // and
     var events = List.<DomainEvent<ProductId>>of(
@@ -215,12 +201,10 @@ class ProductAggregateTest {
     assertThat(product.brand()).isEqualTo(productCreated.brand());
     assertThat(product.variations())
         .hasSize(1)
-        .allSatisfy((variationId, variation) -> {
-          assertThat(variationId).isEqualTo(productVariation2Added.productVariation().id());
-          assertThat(variation.id()).isEqualTo(productVariation2Added.productVariation().id());
-          assertThat(variation.attributes())
-              .containsExactlyInAnyOrderElementsOf(productVariation2Added.productVariation().attributes());
-        });
+        .allSatisfy(variation ->
+            assertThat(variation.attributes())
+                .containsExactlyInAnyOrderElementsOf(productVariation2Added.productVariation().attributes())
+        );
   }
 
   private <ID extends AggregateId> DomainEventHeader<ID> newDomainEventHeader(ID aggregateId) {
@@ -235,7 +219,7 @@ class ProductAggregateTest {
     return new ProductAggregate(
         new ProductId(UUID.randomUUID()),
         new ProductCode("MIGHTY_SHOES_LIMITED_EDITION"),
-        new BrandCode("MIGHTY_BRAND")
+        new BrandId(UUID.randomUUID())
     );
   }
 }

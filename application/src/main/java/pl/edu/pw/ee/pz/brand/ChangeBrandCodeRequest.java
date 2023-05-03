@@ -1,9 +1,5 @@
 package pl.edu.pw.ee.pz.brand;
 
-import lombok.Data;
+record ChangeBrandCodeRequest(String code) {
 
-@Data
-class ChangeBrandCodeRequest {
-  
-  private String code;
 }

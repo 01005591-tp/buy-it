@@ -8,7 +8,7 @@ import pl.edu.pw.ee.pz.event.EventStoreRepository;
 public class ProductInfrastructureConfiguration {
 
   @Produces
-  ProductRepository productRepository(EventStoreRepository eventStoreRepository) {
-    return new ProductRepository(eventStoreRepository);
+  ProductAggregateRepository productRepository(EventStoreRepository eventStoreRepository) {
+    return new ProductAggregateRepository(eventStoreRepository);
   }
 }

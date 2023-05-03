@@ -1,12 +1,11 @@
 package pl.edu.pw.ee.pz.product;
 
 import java.util.List;
-import lombok.Data;
 
-@Data
-class CreateProductRequest {
+record CreateProductRequest(
+    String code,
+    String brandId,
+    List<Variation> variations
+) {
 
-  private String code;
-  private String brandCode;
-  private List<Variation> variations;
 }

@@ -1,12 +1,10 @@
 package pl.edu.pw.ee.pz.product;
 
-import static java.util.stream.Collectors.toMap;
 import static lombok.AccessLevel.PACKAGE;
 
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
+import java.util.Set;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import pl.edu.pw.ee.pz.product.event.ProductBrandChanged;
@@ -19,13 +17,11 @@ import pl.edu.pw.ee.pz.sharedkernel.event.AggregateRoot;
 import pl.edu.pw.ee.pz.sharedkernel.event.AggregateType;
 import pl.edu.pw.ee.pz.sharedkernel.event.DomainEvent;
 import pl.edu.pw.ee.pz.sharedkernel.event.DomainEvent.EventId;
-import pl.edu.pw.ee.pz.sharedkernel.model.BrandCode;
+import pl.edu.pw.ee.pz.sharedkernel.model.BrandId;
 import pl.edu.pw.ee.pz.sharedkernel.model.ProductCode;
 import pl.edu.pw.ee.pz.sharedkernel.model.ProductId;
 import pl.edu.pw.ee.pz.sharedkernel.model.ProductVariation;
-import pl.edu.pw.ee.pz.sharedkernel.model.ProductVariation.VariationId;
 import pl.edu.pw.ee.pz.sharedkernel.model.Version;
-import pl.edu.pw.ee.pz.store.error.ProductVariationAlreadyExistsException;
 import pl.edu.pw.ee.pz.store.error.ProductVariationMissingException;
 
 @Accessors(fluent = true)
@@ -36,15 +32,15 @@ public class ProductAggregate extends AggregateRoot<ProductId> {
   @Getter(PACKAGE)
   private ProductCode code;
   @Getter(PACKAGE)
-  private BrandCode brand;
+  private BrandId brand;
   @Getter(PACKAGE)
-  private final Map<VariationId, ProductVariation> variations = new HashMap<>();
+  private final Set<ProductVariation> variations = new HashSet<>();
 
   ProductAggregate(Version version, EventId latestEvent) {
     super(AGGREGATE_TYPE, version, latestEvent);
   }
 
-  public ProductAggregate(ProductId id, ProductCode code, BrandCode brand) {
+  public ProductAggregate(ProductId id, ProductCode code, BrandId brand) {
     this(Version.initial(), EventId.initial());
     var eventHeader = nextDomainEventHeader(id);
     var created = new ProductCreated(eventHeader, code, brand);
@@ -52,9 +48,8 @@ public class ProductAggregate extends AggregateRoot<ProductId> {
   }
 
   public void addVariation(ProductVariation variation) {
-    var variationId = variation.id();
-    if (variations.containsKey(variationId)) {
-      throw ProductVariationAlreadyExistsException.alreadyExists(this.id, variationId);
+    if (variations.contains(variation)) {
+      return;
     }
     handleAndRegisterEvent(new ProductVariationAdded(
         nextDomainEventHeader(),
@@ -62,13 +57,13 @@ public class ProductAggregate extends AggregateRoot<ProductId> {
     ));
   }
 
-  public void removeVariation(VariationId variationId) {
-    if (!this.variations.containsKey(variationId)) {
-      throw ProductVariationMissingException.variationMissing(this.id, variationId);
+  public void removeVariation(ProductVariation variation) {
+    if (!this.variations.contains(variation)) {
+      throw ProductVariationMissingException.variationMissing(this.id, variation);
     }
     handleAndRegisterEvent(new ProductVariationRemoved(
         nextDomainEventHeader(),
-        variationId
+        variation
     ));
   }
 
@@ -80,13 +75,19 @@ public class ProductAggregate extends AggregateRoot<ProductId> {
   }
 
   public void changeCode(ProductCode code) {
+    if (code.equals(this.code)) {
+      return;
+    }
     handleAndRegisterEvent(new ProductCodeChanged(
         nextDomainEventHeader(),
         code
     ));
   }
 
-  public void changeBrand(BrandCode brand) {
+  public void changeBrand(BrandId brand) {
+    if (brand.equals(this.brand)) {
+      return;
+    }
     handleAndRegisterEvent(new ProductBrandChanged(
         nextDomainEventHeader(),
         brand
@@ -94,7 +95,7 @@ public class ProductAggregate extends AggregateRoot<ProductId> {
   }
 
   @Override
-  protected void handle(DomainEvent event) {
+  protected void handle(DomainEvent<ProductId> event) {
     if (event instanceof ProductCreated created) {
       handle(created);
     } else if (event instanceof ProductVariationAdded variationAdded) {
@@ -117,7 +118,7 @@ public class ProductAggregate extends AggregateRoot<ProductId> {
   }
 
   private void handle(ProductVariationAdded event) {
-    variations.put(event.productVariation().id(), event.productVariation());
+    variations.add(event.productVariation());
   }
 
   private void handle(ProductVariationRemoved event) {
@@ -126,9 +127,7 @@ public class ProductAggregate extends AggregateRoot<ProductId> {
 
   private void handle(ProductVariationsReplaced event) {
     variations.clear();
-    var newVariations = event.variations().stream()
-        .collect(toMap(ProductVariation::id, Function.identity()));
-    variations.putAll(newVariations);
+    variations.addAll(event.variations());
   }
 
   private void handle(ProductCodeChanged event) {

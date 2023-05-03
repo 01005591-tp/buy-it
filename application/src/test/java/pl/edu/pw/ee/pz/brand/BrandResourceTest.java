@@ -60,7 +60,7 @@ public class BrandResourceTest {
     // then
     response
         .then()
-        .statusCode(Status.OK.getStatusCode());
+        .statusCode(Status.CREATED.getStatusCode());
     var responsePayload = response.thenReturn().body().as(CreateBrandResponse.class);
     // and: projection created
     var brand = findBrandProjectionById(responsePayload.id(), Objects::nonNull);

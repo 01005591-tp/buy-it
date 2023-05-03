@@ -1,10 +1,8 @@
 package pl.edu.pw.ee.pz.product;
 
-import lombok.Data;
+record VariationAttribute(
+    String type,
+    String value
+) {
 
-@Data
-class VariationAttribute {
-
-  private String type;
-  private String value;
 }

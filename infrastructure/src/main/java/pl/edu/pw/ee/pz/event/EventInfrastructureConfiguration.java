@@ -11,13 +11,19 @@ import javax.enterprise.inject.Produces;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import pl.edu.pw.ee.pz.sharedkernel.event.EventSerializer;
 import pl.edu.pw.ee.pz.sharedkernel.event.JsonEventSerializer;
+import pl.edu.pw.ee.pz.sharedkernel.json.JsonSerializer;
 
 @ApplicationScoped
 public class EventInfrastructureConfiguration {
 
   @Produces
-  JsonEventSerializer jsonEventSerializer() {
-    return new JsonEventSerializer();
+  JsonSerializer jsonSerializer() {
+    return new JsonSerializer();
+  }
+
+  @Produces
+  JsonEventSerializer jsonEventSerializer(JsonSerializer jsonSerializer) {
+    return new JsonEventSerializer(jsonSerializer);
   }
 
   @Produces

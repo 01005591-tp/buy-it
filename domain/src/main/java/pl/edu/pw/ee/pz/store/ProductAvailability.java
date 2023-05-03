@@ -1,9 +1,9 @@
 package pl.edu.pw.ee.pz.store;
 
-import pl.edu.pw.ee.pz.sharedkernel.model.ProductVariation.VariationId;
+import pl.edu.pw.ee.pz.sharedkernel.model.ProductVariation;
 
 public record ProductAvailability(
-    VariationId productVariation,
+    ProductVariation productVariation,
     AvailableCount available
 ) {
 

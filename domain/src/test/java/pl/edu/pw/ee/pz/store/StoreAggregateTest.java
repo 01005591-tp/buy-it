@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatCode;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 import org.junit.jupiter.api.Test;
@@ -21,7 +22,7 @@ import pl.edu.pw.ee.pz.sharedkernel.model.Address.ZipCode;
 import pl.edu.pw.ee.pz.sharedkernel.model.Country;
 import pl.edu.pw.ee.pz.sharedkernel.model.CountryCode;
 import pl.edu.pw.ee.pz.sharedkernel.model.ProductId;
-import pl.edu.pw.ee.pz.sharedkernel.model.ProductVariation.VariationId;
+import pl.edu.pw.ee.pz.sharedkernel.model.ProductVariation;
 import pl.edu.pw.ee.pz.sharedkernel.model.StoreId;
 import pl.edu.pw.ee.pz.sharedkernel.model.Timestamp;
 import pl.edu.pw.ee.pz.sharedkernel.model.Version;
@@ -88,7 +89,7 @@ class StoreAggregateTest {
     var store = newStore();
     // and
     var productId = new ProductId(UUID.randomUUID());
-    var variationId = new VariationId(UUID.randomUUID());
+    var variationId = new ProductVariation(Set.of());
     var pieces = ProductVariationPieces.of(3L);
 
     // when
@@ -114,7 +115,7 @@ class StoreAggregateTest {
     var store = newStore();
     // and
     var productId = new ProductId(UUID.randomUUID());
-    var variationId = new VariationId(UUID.randomUUID());
+    var variationId = new ProductVariation(Set.of());
     store.addProductVariationPieces(productId, variationId, ProductVariationPieces.of(3L));
 
     // when
@@ -140,7 +141,7 @@ class StoreAggregateTest {
     var store = newStore();
     // and
     var productId = new ProductId(UUID.randomUUID());
-    var variationId = new VariationId(UUID.randomUUID());
+    var variationId = new ProductVariation(Set.of());
     store.addProductVariationPieces(productId, variationId, ProductVariationPieces.of(3L));
 
     // when
@@ -166,7 +167,7 @@ class StoreAggregateTest {
     var store = newStore();
     // and
     var productId = new ProductId(UUID.randomUUID());
-    var variationId = new VariationId(UUID.randomUUID());
+    var variationId = new ProductVariation(Set.of());
     store.addProductVariationPieces(productId, variationId, ProductVariationPieces.of(2L));
 
     // when
@@ -179,7 +180,7 @@ class StoreAggregateTest {
         .isInstanceOf(InsufficientProductVariationPiecesException.class)
         .hasMessage("Product %s variation %s available pieces is %d. Tried to remove %d pieces".formatted(
             productId.value(),
-            variationId.value().toString(),
+            variationId.toString(),
             2,
             3
         ));
@@ -191,7 +192,7 @@ class StoreAggregateTest {
     var store = newStore();
     // and
     var productId = new ProductId(UUID.randomUUID());
-    var variationId = new VariationId(UUID.randomUUID());
+    var variationId = new ProductVariation(Set.of());
 
     // when
     var throwableAssert = assertThatCode(
@@ -203,7 +204,7 @@ class StoreAggregateTest {
         .isInstanceOf(InsufficientProductVariationPiecesException.class)
         .hasMessage("Product %s variation %s available pieces is %d. Tried to remove %d pieces".formatted(
             productId.value(),
-            variationId.value().toString(),
+            variationId.toString(),
             0,
             3
         ));
@@ -218,7 +219,7 @@ class StoreAggregateTest {
     var productVariationPiecesAdded = new ProductVariationPiecesAdded(
         newDomainEventHeader(storeCreated.header().aggregateId()),
         productId,
-        new VariationId(UUID.randomUUID()),
+        new ProductVariation(Set.of()),
         ProductVariationPieces.of(5L)
     );
     // and
@@ -273,7 +274,7 @@ class StoreAggregateTest {
     var productVariationPiecesAdded = new ProductVariationPiecesAdded(
         newDomainEventHeader(storeCreated.header().aggregateId()),
         productId,
-        new VariationId(UUID.randomUUID()),
+        new ProductVariation(Set.of()),
         ProductVariationPieces.of(5L)
     );
     // and

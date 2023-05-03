@@ -2,28 +2,30 @@ package pl.edu.pw.ee.pz.product;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
-import pl.edu.pw.ee.pz.product.port.ProductPort;
+import pl.edu.pw.ee.pz.product.port.ProductAggregatePort;
 
 @ApplicationScoped
 public class ProductConfiguration {
 
   @Produces
-  NewProductCommandHandler newProductCommandHandler(ProductPort productPort) {
-    return new NewProductCommandHandler(productPort);
+  NewProductCommandHandler newProductCommandHandler(ProductAggregatePort productAggregatePort) {
+    return new NewProductCommandHandler(productAggregatePort);
   }
 
   @Produces
-  NewProductVariationsCommandHandler newProductVariationsCommandHandler(ProductPort productPort) {
-    return new NewProductVariationsCommandHandler(productPort);
+  NewProductVariationsCommandHandler newProductVariationsCommandHandler(ProductAggregatePort productAggregatePort) {
+    return new NewProductVariationsCommandHandler(productAggregatePort);
   }
 
   @Produces
-  RemoveProductVariationsCommandHandler removeProductVariationsCommandHandler(ProductPort productPort) {
-    return new RemoveProductVariationsCommandHandler(productPort);
+  RemoveProductVariationsCommandHandler removeProductVariationsCommandHandler(
+      ProductAggregatePort productAggregatePort
+  ) {
+    return new RemoveProductVariationsCommandHandler(productAggregatePort);
   }
 
   @Produces
-  UpdateProductCommandHandler updateProductCommandHandler(ProductPort productPort) {
-    return new UpdateProductCommandHandler(productPort);
+  UpdateProductCommandHandler updateProductCommandHandler(ProductAggregatePort productAggregatePort) {
+    return new UpdateProductCommandHandler(productAggregatePort);
   }
 }
