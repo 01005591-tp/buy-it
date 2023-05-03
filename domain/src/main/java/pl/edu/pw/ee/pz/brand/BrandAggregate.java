@@ -4,6 +4,8 @@ import static lombok.AccessLevel.PACKAGE;
 
 import lombok.Getter;
 import lombok.experimental.Accessors;
+import pl.edu.pw.ee.pz.brand.error.InvalidBrandCodeException;
+import pl.edu.pw.ee.pz.brand.event.BrandCodeChanged;
 import pl.edu.pw.ee.pz.brand.event.BrandCreated;
 import pl.edu.pw.ee.pz.sharedkernel.event.AggregateRoot;
 import pl.edu.pw.ee.pz.sharedkernel.event.AggregateType;
@@ -32,15 +34,35 @@ public class BrandAggregate extends AggregateRoot<BrandId> {
     handleAndRegisterEvent(created);
   }
 
+  public void changeCode(BrandCode code) {
+    if (code.isNullOrBlank()) {
+      throw InvalidBrandCodeException.emptyCode(code);
+    } else if (this.code.equals(code)) {
+      throw InvalidBrandCodeException.sameCode(code);
+    }
+
+    handleAndRegisterEvent(new BrandCodeChanged(
+        nextDomainEventHeader(),
+        code
+    ));
+  }
+
   @Override
-  protected void handle(DomainEvent event) {
+  protected void handle(DomainEvent<BrandId> event) {
     if (event instanceof BrandCreated created) {
       handle(created);
+    } else if (event instanceof BrandCodeChanged codeChanged) {
+      handle(codeChanged);
     }
   }
 
   private void handle(BrandCreated event) {
     this.id = event.header().aggregateId();
+    this.code = event.code();
+    registerOutEvent(event);
+  }
+
+  private void handle(BrandCodeChanged event) {
     this.code = event.code();
     registerOutEvent(event);
   }

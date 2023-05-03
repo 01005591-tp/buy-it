@@ -10,13 +10,11 @@ import io.minio.MakeBucketArgs;
 import io.minio.PutObjectArgs;
 import io.smallrye.mutiny.Uni;
 import java.time.Duration;
+import java.util.concurrent.CompletableFuture;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor(access = PACKAGE)
 class MinioFileService implements FileService {
-
-  private static final long PUT_OBJECT_PART_SIZE = -1;
-
   // avoid network calls for verifying bucket existence
   private final AsyncCache<String, Boolean> bucketExistsCache = Caffeine.newBuilder()
       .maximumSize(1_000L)
@@ -51,7 +49,8 @@ class MinioFileService implements FileService {
         .onItem().transformToUni(exists -> exists
             ? Uni.createFrom().voidItem()
             : makeBucket(bucketName)
-        );
+        )
+        .onItem().invoke(() -> bucketExistsCache.put(bucketName, CompletableFuture.completedFuture(true)));
   }
 
   private Uni<Boolean> bucketExists(String bucketName) {

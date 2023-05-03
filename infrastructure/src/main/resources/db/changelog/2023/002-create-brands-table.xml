@@ -21,9 +21,6 @@
     <createIndex tableName="brands" indexName="brands_id_uidx" unique="true">
       <column name="id"/>
     </createIndex>
-    <createIndex tableName="brands" indexName="brands_code_uidx" unique="true">
-      <column name="code"/>
-    </createIndex>
 
     <createSequence sequenceName="brands_seq" incrementBy="1" minValue="1"/>
   </changeSet>

@@ -18,6 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
 import pl.edu.pw.ee.pz.sharedkernel.command.Command;
 import pl.edu.pw.ee.pz.sharedkernel.command.CommandHandler;
+import pl.edu.pw.ee.pz.sharedkernel.command.CommandHandler.NoResultCommandHandler;
 
 class SimpleCommandHandlerExecutorTest {
 
@@ -103,10 +104,9 @@ class SimpleCommandHandlerExecutorTest {
   @Test
   void should_fail_on_execution_error() {
     // given
-    CommandHandler<AnyCommand> handler = CommandHandler.handler(
+    CommandHandler<AnyCommand, Void> handler = CommandHandler.handler(
         AnyCommand.class,
         cmd -> Uni.createFrom().failure(new UnsupportedOperationException("Not yet implemented"))
-
     );
     var subjectUnderTest = new SimpleCommandHandlerExecutor(handlersInstances(Stream.of(handler)));
     var command = new AnyCommand();
@@ -119,16 +119,16 @@ class SimpleCommandHandlerExecutorTest {
     tester.assertFailedWith(UnsupportedOperationException.class, "Not yet implemented");
   }
 
-  private Instance<CommandHandler<?>> handlersInstances(Stream<CommandHandler<?>> handlers) {
+  private Instance<CommandHandler<?, ?>> handlersInstances(Stream<CommandHandler<?, ?>> handlers) {
     @SuppressWarnings("unchecked")
-    var instance = (Instance<CommandHandler<?>>) mock(Instance.class);
+    var instance = (Instance<CommandHandler<?, ?>>) mock(Instance.class);
     BDDMockito.given(instance.stream())
         .willReturn(handlers);
     return instance;
   }
 
   @RequiredArgsConstructor(access = PRIVATE)
-  private static class AnyCommandHandler<C extends Command> implements CommandHandler<C> {
+  private static class AnyCommandHandler<C extends Command> implements NoResultCommandHandler<C> {
 
     @Getter
     @Accessors(fluent = true)

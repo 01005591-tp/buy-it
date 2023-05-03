@@ -1,13 +1,12 @@
 package pl.edu.pw.ee.pz.brand;
 
-import lombok.With;
+import pl.edu.pw.ee.pz.sharedkernel.command.Command;
 import pl.edu.pw.ee.pz.sharedkernel.model.BrandCode;
 import pl.edu.pw.ee.pz.sharedkernel.model.BrandId;
 
-public record Brand(
+public record ChangeBrandCodeCommand(
     BrandId id,
-    @With
     BrandCode code
-) {
+) implements Command {
 
 }

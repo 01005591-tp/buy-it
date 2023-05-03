@@ -21,18 +21,23 @@ public class EventInfrastructureConfiguration {
   }
 
   @Produces
-  EventStoreDbClient eventStoreDbClient(
-      EventSerializer eventSerializer,
-      EventStoreDbClientProperties eventStoreDbClientProperties
-  ) {
+  EventStoreDBClient eventStoreDBClient(EventStoreDbClientProperties eventStoreDbClientProperties) {
     var uri = URI.create(eventStoreDbClientProperties.uri());
     var settings = EventStoreDBClientSettings.builder()
         .addHost(new Endpoint(uri.getHost(), uri.getPort()))
         .tls(eventStoreDbClientProperties.tls())
         .defaultCredentials(eventStoreDbClientProperties.username(), eventStoreDbClientProperties.password())
         .buildConnectionSettings();
-    var client = EventStoreDBClient.create(settings);
-    return new EventStoreDbClient(eventSerializer, client);
+    return EventStoreDBClient.create(settings);
+  }
+
+  @Produces
+  EventStoreDbClient eventStoreDbClient(
+      EventSerializer eventSerializer,
+      EventStoreDBClient eventStoreDBClient
+  ) {
+
+    return new EventStoreDbClient(eventSerializer, eventStoreDBClient);
   }
 
   @Produces

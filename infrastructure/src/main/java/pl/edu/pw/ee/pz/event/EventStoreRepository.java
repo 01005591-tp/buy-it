@@ -22,7 +22,15 @@ public class EventStoreRepository {
       AggregateRootEmptyConstructor<A> constructor
   ) {
     return eventStoreDbClient.findEventsForAggregate(type, id)
-        .onItem().transform(events -> AggregateRoot.restore(events, Version.initial(), constructor));
+        .onItem().transform(
+            events -> {
+              var lastEvent = events.get(events.size() - 1);
+              return AggregateRoot.restore(
+                  events.stream().map(AggregateDomainEvent::event).toList(),
+                  Version.specified(lastEvent.revision()),
+                  constructor
+              );
+            });
   }
 
   public <ID extends AggregateId, A extends AggregateRoot<ID>> Uni<Void> save(A aggregateRoot) {

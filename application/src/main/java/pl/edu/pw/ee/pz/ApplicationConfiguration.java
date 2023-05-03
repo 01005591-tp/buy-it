@@ -14,7 +14,7 @@ import pl.edu.pw.ee.pz.sharedkernel.event.ProjectionExecutor;
 public class ApplicationConfiguration {
 
   @Produces
-  SimpleCommandHandlerExecutor simpleCommandHandlerExecutor(Instance<CommandHandler<?>> commandHandlers) {
+  SimpleCommandHandlerExecutor simpleCommandHandlerExecutor(Instance<CommandHandler<?, ?>> commandHandlers) {
     return new SimpleCommandHandlerExecutor(commandHandlers);
   }
 

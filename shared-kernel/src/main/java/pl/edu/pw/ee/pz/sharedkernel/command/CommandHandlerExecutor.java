@@ -4,5 +4,5 @@ import io.smallrye.mutiny.Uni;
 
 public interface CommandHandlerExecutor {
 
-  Uni<Void> execute(Command command);
+  <R> Uni<R> execute(Command command);
 }

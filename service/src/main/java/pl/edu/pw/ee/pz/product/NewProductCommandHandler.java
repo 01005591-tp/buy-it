@@ -10,12 +10,12 @@ import pl.edu.pw.ee.pz.sharedkernel.model.ProductVariation;
 import pl.edu.pw.ee.pz.sharedkernel.model.ProductVariation.VariationId;
 
 @RequiredArgsConstructor
-public class NewProductCommandHandler implements CommandHandler<NewProductCommand> {
+public class NewProductCommandHandler implements CommandHandler<NewProductCommand, ProductId> {
 
   private final ProductPort productPort;
 
   @Override
-  public Uni<Void> handle(NewProductCommand command) {
+  public Uni<ProductId> handle(NewProductCommand command) {
     var product = new ProductAggregate(
         new ProductId(UUID.randomUUID()),
         command.code(),
@@ -25,6 +25,7 @@ public class NewProductCommandHandler implements CommandHandler<NewProductComman
         new VariationId(UUID.randomUUID()),
         variation.attributes()
     )));
-    return productPort.save(product);
+    return productPort.save(product)
+        .onItem().transform(success -> product.id());
   }
 }

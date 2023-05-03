@@ -14,6 +14,11 @@ public class BrandConfiguration {
   }
 
   @Produces
+  ChangeBrandCodeCommandHandler changeBrandCodeCommandHandler(BrandAggregatePort brandAggregatePort) {
+    return new ChangeBrandCodeCommandHandler(brandAggregatePort);
+  }
+
+  @Produces
   BrandProjection brandProjection(BrandProjectionPort brandProjectionPort, BrandAggregatePort brandAggregatePort) {
     return new BrandProjection(brandProjectionPort, brandAggregatePort);
   }

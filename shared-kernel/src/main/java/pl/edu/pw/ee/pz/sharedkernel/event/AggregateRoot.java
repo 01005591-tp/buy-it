@@ -69,7 +69,9 @@ public abstract class AggregateRoot<ID extends AggregateId> {
       Version version,
       AggregateRootEmptyConstructor<A> constructor
   ) {
-    var aggregate = constructor.newInstance(version, inEvents.get(inEvents.size() - 1).header().id());
+    var lastEvent = inEvents.get(inEvents.size() - 1);
+    var lastEventId = lastEvent.header().id();
+    var aggregate = constructor.newInstance(version, lastEventId);
     // handle all events, without storing them in pending events
     inEvents.forEach(aggregate::handle);
     // clear out pending events, all events had already been fired

@@ -207,7 +207,7 @@ class ProductAggregateTest {
     );
 
     // when
-    var product = ProductAggregate.restore(events, new Version(1L), ProductAggregate::new);
+    var product = ProductAggregate.restore(events, Version.initial(), ProductAggregate::new);
 
     // then
     assertThat(product.id()).isEqualTo(productCreated.header().aggregateId());

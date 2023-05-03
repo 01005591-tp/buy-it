@@ -17,11 +17,9 @@ import pl.edu.pw.ee.pz.sharedkernel.command.CommandHandlerExecutor;
 
 @Slf4j
 class SimpleCommandHandlerExecutor implements CommandHandlerExecutor {
+    private final Map<Class<? extends Command>, CommandHandler<?, ?>> handlers;
 
-  @SuppressWarnings("rawtypes")
-  private final Map<Class<? extends Command>, CommandHandler> handlers;
-
-  SimpleCommandHandlerExecutor(Instance<CommandHandler<?>> handlersInstances) {
+  SimpleCommandHandlerExecutor(Instance<CommandHandler<?, ?>> handlersInstances) {
     this.handlers = handlersInstances.stream()
         .peek(it -> log.info("Registering command handler for type: {}", it.commandType().getSimpleName()))
         .collect(toMap(CommandHandler::commandType, Function.identity()));
@@ -31,18 +29,18 @@ class SimpleCommandHandlerExecutor implements CommandHandlerExecutor {
   }
 
   @Override
-  public Uni<Void> execute(Command command) {
+  public <R> Uni<R> execute(Command command) {
     var handler = handlers.get(command.getClass());
     var commandType = command.getClass().getSimpleName();
     if (isNull(handler)) {
       log.warn("Missing handler for command {}", commandType);
-      return Uni.createFrom().voidItem();
+      return Uni.createFrom().item(() -> null);
     }
     return doHandle(commandType, command, handler);
   }
 
   @SuppressWarnings({"unchecked", "rawtypes"})
-  private Uni<Void> doHandle(
+  private <R> Uni<R> doHandle(
       String commandType,
       Command command,
       CommandHandler handler
@@ -50,7 +48,7 @@ class SimpleCommandHandlerExecutor implements CommandHandlerExecutor {
     var stopWatch = new StopWatch();
     return handler.handle(command)
         .onSubscription().invoke(stopWatch::start)
-        .onTermination().invoke((TriConsumer<Void, Throwable, Boolean>) (success, failure, cancelled) -> {
+        .onTermination().invoke((TriConsumer<R, Throwable, Boolean>) (success, failure, cancelled) -> {
           stopWatch.stop();
           if (nonNull(failure)) {
             log.info(

@@ -25,6 +25,8 @@ class BrandRdbRepository implements BrandProjectionPort {
   public Uni<Void> save(Brand brand) {
     return client.preparedQuery("""
             INSERT INTO brands (keyset_id, id, code) VALUES (nextval('brands_seq'), $1, $2)
+            ON CONFLICT (id)
+            DO UPDATE SET code = $2
             """)
         .execute(Tuple.of(brand.id().id().toString(), brand.code().value()))
         .replaceWithVoid();
@@ -33,7 +35,7 @@ class BrandRdbRepository implements BrandProjectionPort {
   @Override
   public Uni<Brand> findById(BrandId id) {
     return client.preparedQuery("""
-            SELECT b.id, b.code FROM brands WHERE b.id = $1
+            SELECT b.id, b.code FROM brands b WHERE b.id = $1
             """)
         .execute(Tuple.of(id.id().toString()))
         .onItem().transformToMulti(RowSet::toMulti)
@@ -51,7 +53,7 @@ class BrandRdbRepository implements BrandProjectionPort {
   @Override
   public Uni<PageResult<Brand>> findByCriteria(SearchCriteria criteria) {
     return client.preparedQuery("""
-              SELECT b.keyset_id, b.id, b.code, COUNT(1) OVER (PARTITION BY NULL) AS all_count FROM brands WHERE b.code ILIKE $1 AND b.keyset_id > $2 LIMIT $3
+            SELECT b.keyset_id, b.id, b.code, COUNT(1) OVER (PARTITION BY NULL) AS all_count FROM brands b WHERE b.code ILIKE $1 AND b.keyset_id > $2 LIMIT $3
             """)
         .execute(Tuple.of(criteria.code(), criteria.requestedPage().keySetItemId(), criteria.requestedPage().size()))
         .onItem().transform(rowSet -> {

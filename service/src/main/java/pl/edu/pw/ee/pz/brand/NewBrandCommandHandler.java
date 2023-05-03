@@ -16,7 +16,7 @@ import pl.edu.pw.ee.pz.sharedkernel.command.CommandHandler;
 import pl.edu.pw.ee.pz.sharedkernel.model.BrandId;
 
 @RequiredArgsConstructor
-public class NewBrandCommandHandler implements CommandHandler<NewBrandCommand> {
+public class NewBrandCommandHandler implements CommandHandler<NewBrandCommand, BrandId> {
 
   // TODO: move it to external properties
   private static final String BRANDS_FILES_SPACE = "brands";
@@ -25,15 +25,15 @@ public class NewBrandCommandHandler implements CommandHandler<NewBrandCommand> {
   private final BrandAggregatePort brandAggregatePort;
 
   @Override
-  public Uni<Void> handle(NewBrandCommand command) {
-    return uploadLogo(command)
-        .onItem().transformToUni(success -> brandAggregatePort.save(
-            new BrandAggregate(new BrandId(UUID.randomUUID()), command.code())
-        ));
+  public Uni<BrandId> handle(NewBrandCommand command) {
+    var brand = new BrandAggregate(new BrandId(UUID.randomUUID()), command.code());
+    return uploadLogo(command, brand)
+        .onItem().transformToUni(success -> brandAggregatePort.save(brand))
+        .onItem().transform(success -> brand.id());
   }
 
-  private Uni<Void> uploadLogo(NewBrandCommand command) {
-    var name = new FileName("%s.%s".formatted(command.code().value(), LOGO_FILE_EXTENSION));
+  private Uni<Void> uploadLogo(NewBrandCommand command, BrandAggregate brand) {
+    var name = new FileName("%s.%s".formatted(brand.id().value(), LOGO_FILE_EXTENSION));
     var path = new FilePath(
         new FileSpace(BRANDS_FILES_SPACE)
     );

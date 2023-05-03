@@ -248,10 +248,9 @@ class StoreAggregateTest {
         productVariationPiecesRemoved,
         addressChanged
     );
-    var version = new Version(1L);
 
     // when
-    var store = StoreAggregate.restore(events, version, StoreAggregate::new);
+    var store = StoreAggregate.restore(events, Version.initial(), StoreAggregate::new);
 
     // then
     assertThat(store.id()).isEqualTo(storeCreated.header().aggregateId());
@@ -304,8 +303,8 @@ class StoreAggregateTest {
         productVariationPiecesRemoved,
         addressChanged
     );
-    var version = new Version(1L);
-    var storeFromEvents = StoreAggregate.restore(events, version, StoreAggregate::new);
+    var version = Version.specified(1L);
+    var storeFromEvents = StoreAggregate.restore(events, Version.initial(), StoreAggregate::new);
 
     // when
     var store = StoreAggregate.restore(

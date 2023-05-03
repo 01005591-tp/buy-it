@@ -2,8 +2,7 @@ package pl.edu.pw.ee.pz.sharedkernel.mutiny;
 
 import io.smallrye.mutiny.Uni;
 import java.util.concurrent.Callable;
-import java.util.concurrent.CompletionStage;
-import java.util.function.Supplier;
+import pl.edu.pw.ee.pz.sharedkernel.function.ExceptionUtil;
 
 public final class MutinyUtil {
 
@@ -12,21 +11,6 @@ public final class MutinyUtil {
   }
 
   public static <R> Uni<R> uniFromCallable(Callable<R> callable) {
-    return Uni.createFrom().item(toSupplier(callable));
-  }
-
-  private static <R> Supplier<R> toSupplier(Callable<R> callable) {
-    return () -> {
-      try {
-        return callable.call();
-      } catch (Exception exception) {
-        throw new RuntimeException(exception);
-      }
-    };
-  }
-
-  public static <R> Uni<R> uniFromCompletionStageCallable(Callable<CompletionStage<R>> completionStageCallable) {
-    return uniFromCallable(completionStageCallable)
-        .onItem().transformToUni(completionStage -> Uni.createFrom().completionStage(completionStage));
+    return Uni.createFrom().item(() -> ExceptionUtil.sneakyThrow(callable));
   }
 }
