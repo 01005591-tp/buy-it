@@ -7,12 +7,12 @@ public interface UncheckedSupplier<T> extends Supplier<T> {
   default T get() {
     try {
       return getExceptionally();
-    } catch (Exception e) {
-      return ExceptionUtil.sneakyThrow(e);
+    } catch (Throwable throwable) {
+      return ExceptionUtil.sneakyThrow(throwable);
     }
   }
 
-  T getExceptionally() throws Exception;
+  T getExceptionally() throws Throwable;
 
   static <T> UncheckedSupplier<T> from(UncheckedSupplier<T> supplier) {
     return supplier;
