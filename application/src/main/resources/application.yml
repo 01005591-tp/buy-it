@@ -48,11 +48,6 @@ domain-events:
   publish-timeout: PT1S
   backoff-timeout: PT0.3S
   max-retries: 3
-minio:
-  client:
-    uri: "http://localhost"
-    access-key: "access-key"
-    secret-key: "secret-key"
 
 "%local":
   quarkus:

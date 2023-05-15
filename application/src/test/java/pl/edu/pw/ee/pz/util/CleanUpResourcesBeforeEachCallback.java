@@ -7,13 +7,14 @@ import io.quarkus.test.junit.callback.QuarkusTestMethodContext;
 import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
 import io.vertx.mutiny.pgclient.PgPool;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.spi.CDI;
 import java.time.Duration;
 import java.util.Set;
 import java.util.stream.Stream;
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.spi.CDI;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.reactivestreams.FlowAdapters;
 
 @Slf4j
 @ApplicationScoped
@@ -39,8 +40,8 @@ public class CleanUpResourcesBeforeEachCallback implements QuarkusTestBeforeEach
   }
 
   private void cleanUpEventStoreDb(EventStoreDBClient eventStoreDBClient) {
-    Multi.createFrom().publisher(eventStoreDBClient.readAllReactive(ReadAllOptions.get()
-            .fromEnd()
+    Multi.createFrom().publisher(FlowAdapters.toFlowPublisher(
+            eventStoreDBClient.readAllReactive(ReadAllOptions.get().fromEnd())
         ))
         .onItem().transform(it -> it.getEvent().getEvent().getStreamId())
         .collect()

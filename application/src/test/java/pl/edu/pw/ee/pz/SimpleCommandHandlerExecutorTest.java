@@ -7,10 +7,10 @@ import static org.mockito.Mockito.mock;
 
 import io.smallrye.mutiny.Uni;
 import io.smallrye.mutiny.helpers.test.UniAssertSubscriber;
+import jakarta.enterprise.inject.Instance;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
-import javax.enterprise.inject.Instance;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;

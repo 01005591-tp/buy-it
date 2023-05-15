@@ -1,7 +1,7 @@
 package pl.edu.pw.ee.pz.product;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Produces;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Produces;
 import pl.edu.pw.ee.pz.product.port.ProductAggregatePort;
 
 @ApplicationScoped

@@ -1,9 +1,9 @@
 package pl.edu.pw.ee.pz;
 
 import io.quarkus.runtime.Startup;
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Instance;
-import javax.enterprise.inject.Produces;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Instance;
+import jakarta.enterprise.inject.Produces;
 import pl.edu.pw.ee.pz.sharedkernel.command.CommandHandler;
 import pl.edu.pw.ee.pz.sharedkernel.event.EventSerializer;
 import pl.edu.pw.ee.pz.sharedkernel.event.Projection;
