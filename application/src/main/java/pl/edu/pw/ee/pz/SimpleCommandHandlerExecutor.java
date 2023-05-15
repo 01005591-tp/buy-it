@@ -6,9 +6,9 @@ import static java.util.stream.Collectors.toMap;
 
 import io.smallrye.mutiny.Uni;
 import io.smallrye.mutiny.tuples.Functions.TriConsumer;
+import jakarta.enterprise.inject.Instance;
 import java.util.Map;
 import java.util.function.Function;
-import javax.enterprise.inject.Instance;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.StopWatch;
 import pl.edu.pw.ee.pz.sharedkernel.command.Command;

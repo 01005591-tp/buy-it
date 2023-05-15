@@ -14,6 +14,7 @@ import io.smallrye.mutiny.Uni;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.reactivestreams.FlowAdapters;
 import pl.edu.pw.ee.pz.sharedkernel.event.AggregateId;
 import pl.edu.pw.ee.pz.sharedkernel.event.AggregateRoot;
 import pl.edu.pw.ee.pz.sharedkernel.event.AggregateType;
@@ -35,7 +36,7 @@ class EventStoreDbClient {
     var readOptions = ReadStreamOptions.get()
         .fromStart();
     return Multi.createFrom()
-        .publisher(client.readStreamReactive(streamName(type, id), readOptions))
+        .publisher(FlowAdapters.toFlowPublisher(client.readStreamReactive(streamName(type, id), readOptions)))
         .select().where(ReadMessage::hasEvent)
         .onItem().transform(ReadMessage::getEvent)
         .onItem().<AggregateDomainEvent<ID>>transform(this::deserializeEvent)

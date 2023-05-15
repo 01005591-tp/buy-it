@@ -1,8 +1,8 @@
 package pl.edu.pw.ee.pz.file;
 
 import io.minio.MinioAsyncClient;
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Produces;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Produces;
 
 @ApplicationScoped
 public class ExternalServiceFileConfiguration {

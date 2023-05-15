@@ -1,8 +1,8 @@
 package pl.edu.pw.ee.pz.util;
 
 import io.quarkus.test.common.QuarkusTestResourceLifecycleManager;
+import jakarta.enterprise.context.ApplicationScoped;
 import java.util.Map;
-import javax.enterprise.context.ApplicationScoped;
 import lombok.Getter;
 import org.testcontainers.containers.GenericContainer;
 import pl.edu.pw.ee.pz.util.MinioContainer.MinioCredentials;

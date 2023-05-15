@@ -2,7 +2,7 @@ PROJECT_ROOT_DIR=$(shell git rev-parse --show-toplevel)
 APPLICATION_DIR=${PROJECT_ROOT_DIR}/application
 
 run-local:
-	./mvnw quarkus:dev -pl :application -Dquarkus.profile=local --also-make
+	./mvnw compile quarkus:dev -pl application -Dquarkus.profile=local --also-make
 
 clean:
 	./mvnw clean

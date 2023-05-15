@@ -8,10 +8,10 @@ import static java.util.stream.Collectors.mapping;
 import static java.util.stream.Collectors.toUnmodifiableList;
 
 import io.smallrye.mutiny.Uni;
+import jakarta.enterprise.inject.Instance;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import javax.enterprise.inject.Instance;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.StopWatch;
 import pl.edu.pw.ee.pz.sharedkernel.event.DomainEvent;

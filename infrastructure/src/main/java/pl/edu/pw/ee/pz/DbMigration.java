@@ -3,10 +3,10 @@ package pl.edu.pw.ee.pz;
 import static java.util.Objects.nonNull;
 
 import io.quarkus.runtime.StartupEvent;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.event.Observes;
 import java.sql.DriverManager;
 import java.util.regex.Pattern;
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.event.Observes;
 import liquibase.Contexts;
 import liquibase.LabelExpression;
 import liquibase.Liquibase;
