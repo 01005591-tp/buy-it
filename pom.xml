@@ -18,24 +18,25 @@
   </modules>
 
   <properties>
-    <compiler-plugin.version>3.10.1</compiler-plugin.version>
+    <compiler-plugin.version>3.11.0</compiler-plugin.version>
     <maven.compiler.release>17</maven.compiler.release>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
     <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
-    <quarkus.platform.version>2.16.3.Final</quarkus.platform.version>
-    <jandex-maven-plugin.version>3.0.5</jandex-maven-plugin.version>
+    <quarkus.platform.version>2.16.7.Final</quarkus.platform.version>
+    <jandex-maven-plugin.version>3.1.1</jandex-maven-plugin.version>
     <jgitver-maven-plugin.version>1.9.0</jgitver-maven-plugin.version>
-    <editorconfig-maven-plugin.version>0.1.1</editorconfig-maven-plugin.version>
+    <editorconfig-maven-plugin.version>0.1.3</editorconfig-maven-plugin.version>
     <lombok.version>1.18.26</lombok.version>
     <assertj.version>3.24.2</assertj.version>
     <snakeyaml.version>2.0</snakeyaml.version>
-    <eventstore-db-client-java.version>4.1.1</eventstore-db-client-java.version>
+    <eventstore-db-client-java.version>4.2.0</eventstore-db-client-java.version>
     <minio.version>8.5.2</minio.version>
+    <!-- Minio client uses and requires OkHttp 4.10.0 -->
     <okhttp.version>4.10.0</okhttp.version>
     <skipITs>true</skipITs>
-    <surefire-plugin.version>3.0.0-M7</surefire-plugin.version>
+    <surefire-plugin.version>3.1.0</surefire-plugin.version>
   </properties>
 
   <dependencyManagement>
