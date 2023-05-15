@@ -44,9 +44,6 @@ mp:
           serializer: org.apache.kafka.common.serialization.StringSerializer
         value:
           serializer: org.apache.kafka.common.serialization.ByteArraySerializer
-eventstore:
-  db:
-    uri: "esdb://localhost"
 domain-events:
   publish-timeout: PT1S
   backoff-timeout: PT0.3S
@@ -57,38 +54,74 @@ minio:
     access-key: "access-key"
     secret-key: "secret-key"
 
-"%local%":
+"%local":
   quarkus:
     http:
       port: 4000
     datasource:
-      db-kind: postgres
+      devservices:
+        enabled: false
+      db-kind: postgresql
       username: buy_it
       password: buy_it
       reactive:
-        url: postgresql://192.168.49.2:30432/buy-it
+        url: postgresql://localhost:15432/buy_it
     kafka:
-      bootstrap:
-        servers: kafka:9092
-
+      devservices:
+        enabled: false
+  kafka:
+    bootstrap:
+      servers: localhost:19092
   eventstore:
     db:
-      uri: ""
+      hosts:
+        - host: "127.0.0.1"
+          port: 12111
+        - host: "127.0.0.1"
+          port: 12112
+        - host: "127.0.0.1"
+          port: 12113
+      username: admin
+      password: changeit
+      tls: true
+  minio:
+    client:
+      uri: "http://192.168.49.2:31932"
+      access-key: "admin"
+      secret-key: "changeit"
 
-"%prod%":
+"%prod":
   quarkus:
     http:
       port: 4000
     datasource:
-      db-kind: postgres
+      devservices:
+        enabled: false
+      db-kind: postgresql
       username: buy_it
       password: buy_it
       reactive:
-        url: postgresql://192.168.49.2:30432/buy-it
+        url: postgresql://localhost:15432/buy_it
     kafka:
-      bootstrap:
-        servers: kafka:9092
-
+      devservices:
+        enabled: false
+  kafka:
+    bootstrap:
+      servers: localhost:19092
   eventstore:
     db:
-      uri: ""
+      hosts:
+        - host: "localhost"
+          port: 12111
+        - host: "localhost"
+          port: 12112
+        - host: "localhost"
+          port: 12113
+      username: admin
+      password: changeit
+      tls: true
+  minio:
+    client:
+      uri: "http://192.168.49.2:31932"
+      access-key: "admin"
+      secret-key: "changeit"

@@ -3,6 +3,7 @@ package pl.edu.pw.ee.pz;
 import static java.util.Objects.nonNull;
 
 import io.quarkus.runtime.StartupEvent;
+import java.sql.DriverManager;
 import java.util.regex.Pattern;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
@@ -10,6 +11,7 @@ import liquibase.Contexts;
 import liquibase.LabelExpression;
 import liquibase.Liquibase;
 import liquibase.database.DatabaseFactory;
+import liquibase.database.jvm.JdbcConnection;
 import liquibase.exception.LiquibaseException;
 import liquibase.resource.ClassLoaderResourceAccessor;
 import lombok.extern.slf4j.Slf4j;
@@ -60,9 +62,10 @@ class DbMigration {
     Liquibase liquibase = null;
     try {
       var resourceAccessor = new ClassLoaderResourceAccessor(Thread.currentThread().getContextClassLoader());
-      var liquibaseDbConnection = DatabaseFactory.getInstance()
-          .openConnection(url, username, password, null, resourceAccessor);
-      liquibase = new Liquibase(changeLog, resourceAccessor, liquibaseDbConnection);
+      var connection = DriverManager.getConnection(url, username, password);
+      var jdbcConnection = new JdbcConnection(connection);
+      var database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(jdbcConnection);
+      liquibase = new Liquibase(changeLog, resourceAccessor, database);
       liquibase.update(new Contexts(), new LabelExpression());
     } catch (Exception exception) {
       log.error("Database migration failed", exception);

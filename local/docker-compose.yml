@@ -1,0 +1,232 @@
+version: "3.9"
+services:
+  buy-it-postgres:
+    image: postgres:15.2-alpine
+    container_name: buy-it-postgres
+    restart: always
+    environment:
+      - PGUSER=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+    ports:
+      - "15432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready" ]
+      interval: 1s
+      timeout: 5s
+      retries: 10
+    networks:
+      - local_default
+  buy-it-postgres-adminer:
+    image: adminer
+    container_name: buy-it-postgres-adminer
+    restart: always
+    ports:
+      - "15433:8080"
+    networks:
+      - local_default
+
+  buy-it-eventstoredb-certs:
+    image: eventstore/es-gencert-cli:1.0.2
+    container_name: buy-it-eventstoredb-certs
+    entrypoint: bash
+    user: "1000:1000"
+    command: >
+      -c "mkdir -p ./certs && cd /certs
+      && es-gencert-cli create-ca
+      && es-gencert-cli create-node -out ./node1 -ip-addresses 127.0.0.1,172.30.240.11 -dns-names localhost
+      && es-gencert-cli create-node -out ./node2 -ip-addresses 127.0.0.1,172.30.240.12 -dns-names localhost
+      && es-gencert-cli create-node -out ./node3 -ip-addresses 127.0.0.1,172.30.240.13 -dns-names localhost
+      && find . -type f -print0 | xargs -0 chmod 666"
+    volumes:
+      - ./eventstoredb/certs:/certs
+  
+  buy-it.eventstore.node1: &template
+    image: eventstore/eventstore:21.10.0-buster-slim
+    container_name: buy-it.eventstore.node1
+    env_file:
+      - eventstoredb/vars.env
+    environment:
+      - EVENTSTORE_INT_IP=172.30.240.11
+      - EVENTSTORE_ADVERTISE_HTTP_PORT_TO_CLIENT_AS=12111
+      - EVENTSTORE_ADVERTISE_TCP_PORT_TO_CLIENT_AS=11111
+      - EVENTSTORE_GOSSIP_SEED=172.30.240.12:2113,172.30.240.13:2113
+      - EVENTSTORE_TRUSTED_ROOT_CERTIFICATES_PATH=/certs/ca
+      - EVENTSTORE_CERTIFICATE_FILE=/certs/node1/node.crt
+      - EVENTSTORE_CERTIFICATE_PRIVATE_KEY_FILE=/certs/node1/node.key
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "curl --fail --insecure https://buy-it.eventstore.node1:2113/health/live || exit 1",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 24
+    ports:
+      - 11111:1113
+      - 12111:2113
+    volumes:
+      - ./eventstoredb/certs:/certs
+    depends_on:
+      - buy-it-eventstoredb-certs
+    restart: always
+    networks:
+      eventstoredb:
+        ipv4_address: 172.30.240.11
+
+  buy-it.eventstore.node2:
+    <<: *template
+    container_name: buy-it.eventstore.node2
+    env_file:
+      - eventstoredb/vars.env
+    environment:
+      - EVENTSTORE_INT_IP=172.30.240.12
+      - EVENTSTORE_ADVERTISE_HTTP_PORT_TO_CLIENT_AS=12112
+      - EVENTSTORE_ADVERTISE_TCP_PORT_TO_CLIENT_AS=11112
+      - EVENTSTORE_GOSSIP_SEED=172.30.240.11:2113,172.30.240.13:2113
+      - EVENTSTORE_TRUSTED_ROOT_CERTIFICATES_PATH=/certs/ca
+      - EVENTSTORE_CERTIFICATE_FILE=/certs/node2/node.crt
+      - EVENTSTORE_CERTIFICATE_PRIVATE_KEY_FILE=/certs/node2/node.key
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "curl --fail --insecure https://buy-it.eventstore.node2:2113/health/live || exit 1",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 24
+    ports:
+      - 11112:1113
+      - 12112:2113
+    networks:
+      eventstoredb:
+        ipv4_address: 172.30.240.12
+
+  buy-it.eventstore.node3:
+    <<: *template
+    container_name: buy-it.eventstore.node3
+    env_file:
+      - eventstoredb/vars.env
+    environment:
+      - EVENTSTORE_INT_IP=172.30.240.13
+      - EVENTSTORE_ADVERTISE_HTTP_PORT_TO_CLIENT_AS=12113
+      - EVENTSTORE_ADVERTISE_TCP_PORT_TO_CLIENT_AS=11113
+      - EVENTSTORE_GOSSIP_SEED=172.30.240.11:2113,172.30.240.12:2113
+      - EVENTSTORE_TRUSTED_ROOT_CERTIFICATES_PATH=/certs/ca
+      - EVENTSTORE_CERTIFICATE_FILE=/certs/node3/node.crt
+      - EVENTSTORE_CERTIFICATE_PRIVATE_KEY_FILE=/certs/node3/node.key
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "curl --fail --insecure https://buy-it.eventstore.node3:2113/health/live || exit 1",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 24
+    ports:
+      - 11113:1113
+      - 12113:2113
+    networks:
+      eventstoredb:
+        ipv4_address: 172.30.240.13
+  buy-it-minio:
+    image: quay.io/minio/minio:latest
+    container_name: buy-it-minio
+    environment:
+      - MINIO_ROOT_USER=admin
+      - MINIO_ROOT_PASSWORD=changeit
+    command: server --console-address ":9001" /data
+    ports:
+      - "19000:9000"
+      - "19001:9001"
+    volumes:
+      - minio-data:/data
+    healthcheck:
+      test: [ "CMD-SHELL", "curl http://localhost:9000/minio/health/ready" ]
+      interval: 1s
+      timeout: 5s
+      retries: 10
+    networks:
+      - local_default
+
+  buy-it-redpanda:
+    image: docker.redpanda.com/redpandadata/redpanda:v23.1.8
+    container_name: buy-it-redpanda
+    command:
+      - redpanda
+      - start
+      - --kafka-addr internal://0.0.0.0:9092,external://0.0.0.0:19092
+      # Address the broker advertises to clients that connect to the Kafka API.
+      # Use the internal addresses to connect to the Redpanda brokers'
+      # from inside the same Docker network.
+      # Use the external addresses to connect to the Redpanda brokers'
+      # from outside the Docker network.
+      - --advertise-kafka-addr internal://buy-it-redpanda:9092,external://localhost:19092
+      - --pandaproxy-addr internal://0.0.0.0:8082,external://0.0.0.0:18082
+      # Address the broker advertises to clients that connect to the HTTP Proxy.
+      - --advertise-pandaproxy-addr internal://buy-it-redpanda:8082,external://localhost:18082
+      - --schema-registry-addr internal://0.0.0.0:8081,external://0.0.0.0:18081
+      # Redpanda brokers use the RPC API to communicate with eachother internally.
+      - --rpc-addr buy-it-redpanda:33145
+      - --advertise-rpc-addr buy-it-redpanda:33145
+      # Tells Seastar (the framework Redpanda uses under the hood) to use 1 core on the system.
+      - --smp 1
+      # The amount of memory to make available to Redpanda.
+      - --memory 1G
+      # Mode dev-container uses well-known configuration properties for development in containers.
+      - --mode dev-container
+      # enable logs for debugging.
+      - --default-log-level=debug
+    ports:
+      - "18081:18081"
+      - "18082:18082"
+      - "19092:19092"
+      - "19644:9644"
+    volumes:
+      - redpanda-data:/var/lib/redpanda/data
+    networks:
+      - local_default
+  buy-it-redpanda-console:
+    image: docker.redpanda.com/redpandadata/console:v2.2.3
+    container_name: buy-it-redpanda-console
+    entrypoint: /bin/sh
+    command: -c 'echo "$$CONSOLE_CONFIG_FILE" > /tmp/config.yml; /app/console'
+    environment:
+      CONFIG_FILEPATH: /tmp/config.yml
+      CONSOLE_CONFIG_FILE: |
+        kafka:
+          brokers: ["buy-it-redpanda:9092"]
+          schemaRegistry:
+            enabled: true
+            urls: ["http://buy-it-redpanda:8081"]
+        redpanda:
+          adminApi:
+            enabled: true
+            urls: ["http://buy-it-redpanda:9644"]
+    ports:
+      - "18080:8080"
+    networks:
+      - local_default
+    depends_on:
+      - buy-it-redpanda
+
+volumes:
+  postgres-data:
+  minio-data:
+  redpanda-data:
+
+networks:
+  local_default:
+  eventstoredb:
+    name: buy-it-eventstoredb
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.30.240.0/24

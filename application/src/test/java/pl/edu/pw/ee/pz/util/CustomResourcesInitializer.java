@@ -38,8 +38,12 @@ public class CustomResourcesInitializer implements QuarkusTestResourceLifecycleM
         Map.entry("minio.client.access-key", MINIO_CREDENTIALS.username()),
         Map.entry("minio.client.secret-key", MINIO_CREDENTIALS.password()),
         Map.entry(
-            "eventstore.db.uri",
-            "esdb://%s:%d".formatted(eventStoreDbContainer.getHost(), eventStoreDbContainer.getHttpPort())
+            "eventstore.db.hosts[0].host",
+            "%s".formatted(eventStoreDbContainer.getHost())
+        ),
+        Map.entry(
+            "eventstore.db.hosts[0].port",
+            "%d".formatted(eventStoreDbContainer.getHttpPort())
         ),
         Map.entry("eventstore.db.username", EVENT_STORE_USERNAME),
         Map.entry("eventstore.db.password", EVENT_STORE_PASSWORD),

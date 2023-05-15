@@ -4,7 +4,6 @@ import com.eventstore.dbclient.Endpoint;
 import com.eventstore.dbclient.EventStoreDBClient;
 import com.eventstore.dbclient.EventStoreDBClientSettings;
 import io.smallrye.reactive.messaging.kafka.KafkaClientService;
-import java.net.URI;
 import java.util.Objects;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
@@ -28,11 +27,15 @@ public class EventInfrastructureConfiguration {
 
   @Produces
   EventStoreDBClient eventStoreDBClient(EventStoreDbClientProperties eventStoreDbClientProperties) {
-    var uri = URI.create(eventStoreDbClientProperties.uri());
-    var settings = EventStoreDBClientSettings.builder()
-        .addHost(new Endpoint(uri.getHost(), uri.getPort()))
+    var builder = EventStoreDBClientSettings.builder();
+    eventStoreDbClientProperties.hosts()
+        .stream()
+        .map(host -> new Endpoint(host.host(), host.port()))
+        .forEach(builder::addHost);
+    var settings = builder
         .tls(eventStoreDbClientProperties.tls())
         .defaultCredentials(eventStoreDbClientProperties.username(), eventStoreDbClientProperties.password())
+        .tlsVerifyCert(false)
         .buildConnectionSettings();
     return EventStoreDBClient.create(settings);
   }
