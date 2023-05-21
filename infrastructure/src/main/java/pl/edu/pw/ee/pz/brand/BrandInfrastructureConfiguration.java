@@ -9,7 +9,7 @@ import pl.edu.pw.ee.pz.event.EventStoreRepository;
 public class BrandInfrastructureConfiguration {
 
   @Produces
-  BrandAggregateRepository brandRepository(EventStoreRepository eventStoreRepository) {
+  BrandAggregateRepository brandAggregateRepository(EventStoreRepository eventStoreRepository) {
     return new BrandAggregateRepository(eventStoreRepository);
   }
 

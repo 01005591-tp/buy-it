@@ -1,0 +1,25 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  logicalFilePath="2023/003-create-product-variation-attributes-table.xml"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+  <changeSet id="create-product-variation-attributes-table" author="tomasz.pazdziurek">
+    <createTable tableName="product_variation_attributes">
+      <column name="variation_id" type="VARCHAR(36)" remarks="Product variation ID">
+        <constraints nullable="false"/>
+      </column>
+      <column name="product_id" type="VARCHAR(36)" remarks="Product ID">
+        <constraints nullable="false"/>
+      </column>
+      <column name="type" type="VARCHAR(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="value" type="VARCHAR(255)"/>
+    </createTable>
+
+    <addPrimaryKey tableName="product_variation_attributes" columnNames="product_id,variation_id,type"/>
+  </changeSet>
+
+</databaseChangeLog>

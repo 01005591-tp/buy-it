@@ -6,4 +6,5 @@
 
   <include file="2023/001-create-products-table.xml" relativeToChangelogFile="true"/>
   <include file="2023/002-create-brands-table.xml" relativeToChangelogFile="true"/>
+  <include file="2023/003-create-product-variation-attributes-table.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>

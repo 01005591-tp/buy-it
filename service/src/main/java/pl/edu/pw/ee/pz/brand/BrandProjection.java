@@ -1,5 +1,7 @@
 package pl.edu.pw.ee.pz.brand;
 
+import static lombok.AccessLevel.PACKAGE;
+
 import io.smallrye.mutiny.Uni;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +14,7 @@ import pl.edu.pw.ee.pz.sharedkernel.event.Projection;
 import pl.edu.pw.ee.pz.sharedkernel.model.BrandId;
 
 @Slf4j
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = PACKAGE)
 class BrandProjection implements Projection {
 
   private final BrandProjectionPort brandProjectionPort;
@@ -35,6 +37,7 @@ class BrandProjection implements Projection {
       return handle(codeChanged)
           .onFailure().call(throwable -> recover(codeChanged, throwable));
     }
+    log.debug("Ignored unsupported event {}", event.getClass().getSimpleName());
     return Uni.createFrom().voidItem();
   }
 
@@ -44,7 +47,7 @@ class BrandProjection implements Projection {
         event.code()
     );
     return brandProjectionPort.save(brand)
-        .onItem().invoke(() -> log.info("Brand stored {}", brand.id().id()));
+        .onItem().invoke(() -> log.info("Brand stored {}", brand.id().value()));
   }
 
   private Uni<Void> handle(BrandCodeChanged event) {

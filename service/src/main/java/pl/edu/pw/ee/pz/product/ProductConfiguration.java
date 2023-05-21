@@ -28,4 +28,12 @@ public class ProductConfiguration {
   UpdateProductCommandHandler updateProductCommandHandler(ProductAggregatePort productAggregatePort) {
     return new UpdateProductCommandHandler(productAggregatePort);
   }
+
+  @Produces
+  ProductProjection productProjection(
+      ProductProjectionPort productProjectionPort,
+      ProductAggregatePort productAggregatePort
+  ) {
+    return new ProductProjection(productProjectionPort, productAggregatePort);
+  }
 }

@@ -115,27 +115,33 @@ public class ProductAggregate extends AggregateRoot<ProductId> {
     this.id = event.header().aggregateId();
     this.code = event.code();
     this.brand = event.brand();
+    registerOutEvent(event);
   }
 
   private void handle(ProductVariationAdded event) {
     variations.add(event.productVariation());
+    registerOutEvent(event);
   }
 
   private void handle(ProductVariationRemoved event) {
     variations.remove(event.variation());
+    registerOutEvent(event);
   }
 
   private void handle(ProductVariationsReplaced event) {
     variations.clear();
     variations.addAll(event.variations());
+    registerOutEvent(event);
   }
 
   private void handle(ProductCodeChanged event) {
     this.code = event.code();
+    registerOutEvent(event);
   }
 
   private void handle(ProductBrandChanged event) {
     this.brand = event.brand();
+    registerOutEvent(event);
   }
 
   public static AggregateType aggregateType() {

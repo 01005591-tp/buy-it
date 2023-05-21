@@ -28,6 +28,9 @@ import lombok.experimental.Accessors;
  * This API allows performing recursive operations normally unavailable in Java due to a strictly limited Stack size.
  * </p>
  * <p>
+ * This design pattern is also called a <a href="https://en.wikipedia.org/wiki/Trampoline_(computing)">Trampoline</a>.
+ * </p>
+ * <p>
  * Example use:
  * <pre>
  * package acme;

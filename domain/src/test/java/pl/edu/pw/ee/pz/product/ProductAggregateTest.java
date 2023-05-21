@@ -19,6 +19,7 @@ import pl.edu.pw.ee.pz.sharedkernel.model.BrandId;
 import pl.edu.pw.ee.pz.sharedkernel.model.ProductCode;
 import pl.edu.pw.ee.pz.sharedkernel.model.ProductId;
 import pl.edu.pw.ee.pz.sharedkernel.model.ProductVariation;
+import pl.edu.pw.ee.pz.sharedkernel.model.ProductVariationId;
 import pl.edu.pw.ee.pz.sharedkernel.model.Timestamp;
 import pl.edu.pw.ee.pz.sharedkernel.model.VariationAttribute;
 import pl.edu.pw.ee.pz.sharedkernel.model.VariationAttribute.AttributeType;
@@ -54,6 +55,7 @@ class ProductAggregateTest {
     var product = newProduct();
     // and
     var productVariation = new ProductVariation(
+        new ProductVariationId(UUID.randomUUID()),
         Set.of(
             new VariationAttribute(
                 new AttributeType("SIZE"),
@@ -87,6 +89,7 @@ class ProductAggregateTest {
     var product = newProduct();
     // and
     var productVariation = new ProductVariation(
+        new ProductVariationId(UUID.randomUUID()),
         Set.of(
             new VariationAttribute(
                 new AttributeType("SIZE"),
@@ -119,7 +122,7 @@ class ProductAggregateTest {
     // given
     var product = newProduct();
     // and
-    var variation = new ProductVariation(Set.of());
+    var variation = new ProductVariation(new ProductVariationId(UUID.randomUUID()), Set.of());
 
     // when
     var throwableAssert = assertThatCode(() -> product.removeVariation(variation));
@@ -143,6 +146,7 @@ class ProductAggregateTest {
     var productVariation1Added = new ProductVariationAdded(
         newDomainEventHeader(productId),
         new ProductVariation(
+            new ProductVariationId(UUID.randomUUID()),
             Set.of(
                 new VariationAttribute(
                     new AttributeType("SIZE"),
@@ -163,6 +167,7 @@ class ProductAggregateTest {
     var productVariation2Added = new ProductVariationAdded(
         newDomainEventHeader(productId),
         new ProductVariation(
+            new ProductVariationId(UUID.randomUUID()),
             Set.of(
                 new VariationAttribute(
                     new AttributeType("SIZE"),

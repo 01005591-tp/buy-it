@@ -23,6 +23,7 @@ import pl.edu.pw.ee.pz.sharedkernel.model.Country;
 import pl.edu.pw.ee.pz.sharedkernel.model.CountryCode;
 import pl.edu.pw.ee.pz.sharedkernel.model.ProductId;
 import pl.edu.pw.ee.pz.sharedkernel.model.ProductVariation;
+import pl.edu.pw.ee.pz.sharedkernel.model.ProductVariationId;
 import pl.edu.pw.ee.pz.sharedkernel.model.StoreId;
 import pl.edu.pw.ee.pz.sharedkernel.model.Timestamp;
 import pl.edu.pw.ee.pz.sharedkernel.model.Version;
@@ -89,7 +90,7 @@ class StoreAggregateTest {
     var store = newStore();
     // and
     var productId = new ProductId(UUID.randomUUID());
-    var variationId = new ProductVariation(Set.of());
+    var variationId = new ProductVariation(new ProductVariationId(UUID.randomUUID()), Set.of());
     var pieces = ProductVariationPieces.of(3L);
 
     // when
@@ -115,7 +116,7 @@ class StoreAggregateTest {
     var store = newStore();
     // and
     var productId = new ProductId(UUID.randomUUID());
-    var variationId = new ProductVariation(Set.of());
+    var variationId = new ProductVariation(new ProductVariationId(UUID.randomUUID()), Set.of());
     store.addProductVariationPieces(productId, variationId, ProductVariationPieces.of(3L));
 
     // when
@@ -141,7 +142,7 @@ class StoreAggregateTest {
     var store = newStore();
     // and
     var productId = new ProductId(UUID.randomUUID());
-    var variationId = new ProductVariation(Set.of());
+    var variationId = new ProductVariation(new ProductVariationId(UUID.randomUUID()), Set.of());
     store.addProductVariationPieces(productId, variationId, ProductVariationPieces.of(3L));
 
     // when
@@ -167,7 +168,7 @@ class StoreAggregateTest {
     var store = newStore();
     // and
     var productId = new ProductId(UUID.randomUUID());
-    var variationId = new ProductVariation(Set.of());
+    var variationId = new ProductVariation(new ProductVariationId(UUID.randomUUID()), Set.of());
     store.addProductVariationPieces(productId, variationId, ProductVariationPieces.of(2L));
 
     // when
@@ -192,7 +193,7 @@ class StoreAggregateTest {
     var store = newStore();
     // and
     var productId = new ProductId(UUID.randomUUID());
-    var variationId = new ProductVariation(Set.of());
+    var variationId = new ProductVariation(new ProductVariationId(UUID.randomUUID()), Set.of());
 
     // when
     var throwableAssert = assertThatCode(
@@ -219,7 +220,7 @@ class StoreAggregateTest {
     var productVariationPiecesAdded = new ProductVariationPiecesAdded(
         newDomainEventHeader(storeCreated.header().aggregateId()),
         productId,
-        new ProductVariation(Set.of()),
+        new ProductVariation(new ProductVariationId(UUID.randomUUID()), Set.of()),
         ProductVariationPieces.of(5L)
     );
     // and
@@ -274,7 +275,7 @@ class StoreAggregateTest {
     var productVariationPiecesAdded = new ProductVariationPiecesAdded(
         newDomainEventHeader(storeCreated.header().aggregateId()),
         productId,
-        new ProductVariation(Set.of()),
+        new ProductVariation(new ProductVariationId(UUID.randomUUID()), Set.of()),
         ProductVariationPieces.of(5L)
     );
     // and

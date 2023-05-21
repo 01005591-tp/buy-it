@@ -7,6 +7,7 @@ import pl.edu.pw.ee.pz.product.port.ProductAggregatePort;
 import pl.edu.pw.ee.pz.sharedkernel.command.CommandHandler;
 import pl.edu.pw.ee.pz.sharedkernel.model.ProductId;
 import pl.edu.pw.ee.pz.sharedkernel.model.ProductVariation;
+import pl.edu.pw.ee.pz.sharedkernel.model.ProductVariationId;
 
 @RequiredArgsConstructor
 public class NewProductCommandHandler implements CommandHandler<NewProductCommand, ProductId> {
@@ -21,6 +22,7 @@ public class NewProductCommandHandler implements CommandHandler<NewProductComman
         command.brand()
     );
     command.variations().forEach(variation -> product.addVariation(new ProductVariation(
+        new ProductVariationId(UUID.randomUUID()),
         variation.attributes()
     )));
     return productAggregatePort.save(product)
