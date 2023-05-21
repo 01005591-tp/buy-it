@@ -5,8 +5,8 @@ import java.util.List;
 
 public interface Projection {
 
-  Uni<Void> handle(DomainEvent<?> event);
-
   List<Class<? extends DomainEvent<?>>> supportedEvents();
+
+  Uni<Void> handle(DomainEvent<?> event);
 
 }

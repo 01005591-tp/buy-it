@@ -39,10 +39,8 @@ public class BrandResourceTest {
 
   @Inject
   FileService fileService;
-
   @Inject
   PgPool pgPool;
-
   @Inject
   BrandAggregatePort brandAggregatePort;
 

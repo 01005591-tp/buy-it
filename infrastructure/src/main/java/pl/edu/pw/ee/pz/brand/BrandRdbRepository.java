@@ -28,7 +28,7 @@ class BrandRdbRepository implements BrandProjectionPort {
             ON CONFLICT (id)
             DO UPDATE SET code = $2
             """)
-        .execute(Tuple.of(brand.id().id().toString(), brand.code().value()))
+        .execute(Tuple.of(brand.id().value(), brand.code().value()))
         .replaceWithVoid();
   }
 
@@ -37,7 +37,7 @@ class BrandRdbRepository implements BrandProjectionPort {
     return client.preparedQuery("""
             SELECT b.id, b.code FROM brands b WHERE b.id = $1
             """)
-        .execute(Tuple.of(id.id().toString()))
+        .execute(Tuple.of(id.value()))
         .onItem().transformToMulti(RowSet::toMulti)
         .onItem().transform(BrandRdbRepository::toBrand)
         .collect().first();
