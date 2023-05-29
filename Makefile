@@ -14,3 +14,6 @@ clean-package: clean package
 
 check-vulnerabilities:
 	./mvnw org.owasp:dependency-check-maven:aggregate
+
+check-versions:
+	./mvnw versions:display-dependency-updates

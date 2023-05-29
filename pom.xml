@@ -22,13 +22,13 @@
     <maven.compiler.release>17</maven.compiler.release>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <quarkus.platform.group-id>io.quarkus</quarkus.platform.group-id>
     <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
-    <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
-    <quarkus.platform.version>3.0.3.Final</quarkus.platform.version>
+    <quarkus.platform.version>3.1.0.Final</quarkus.platform.version>
     <jandex-maven-plugin.version>3.1.1</jandex-maven-plugin.version>
     <jgitver-maven-plugin.version>1.9.0</jgitver-maven-plugin.version>
     <editorconfig-maven-plugin.version>0.1.1</editorconfig-maven-plugin.version>
-    <lombok.version>1.18.26</lombok.version>
+    <lombok.version>1.18.28</lombok.version>
     <assertj.version>3.24.2</assertj.version>
     <snakeyaml.version>2.0</snakeyaml.version>
     <eventstore-db-client-java.version>4.1.1</eventstore-db-client-java.version>
