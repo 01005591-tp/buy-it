@@ -17,8 +17,11 @@ import java.util.function.Predicate;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 import pl.edu.pw.ee.pz.product.port.ProductAggregatePort;
+import pl.edu.pw.ee.pz.sharedkernel.json.JsonSerializer;
 import pl.edu.pw.ee.pz.sharedkernel.model.ProductId;
 import pl.edu.pw.ee.pz.sharedkernel.model.ProductVariation;
+import pl.edu.pw.ee.pz.sharedkernel.model.VariationAttribute.IntegerAttributeValue;
+import pl.edu.pw.ee.pz.sharedkernel.model.VariationAttribute.StringAttributeValue;
 import pl.edu.pw.ee.pz.util.CustomResourcesInitializer;
 
 @QuarkusTest
@@ -29,6 +32,8 @@ class ProductResourceTest {
   ProductProjectionPort productProjectionPort;
   @Inject
   ProductAggregatePort productAggregatePort;
+  @Inject
+  JsonSerializer jsonSerializer;
 
   @Test
   void should_create_product() {
@@ -67,10 +72,12 @@ class ProductResourceTest {
                 .hasSize(2)
                 .anySatisfy(attribute -> {
                   assertThat(attribute.type().value()).isEqualTo("SIZE_EU");
-                  assertThat(attribute.value().value()).isEqualTo("38");
+                  assertThat(attribute.value()).isInstanceOf(IntegerAttributeValue.class);
+                  assertThat(attribute.value().value()).isEqualTo(38);
                 })
                 .anySatisfy(attribute -> {
                   assertThat(attribute.type().value()).isEqualTo("COLORS");
+                  assertThat(attribute.value()).isInstanceOf(StringAttributeValue.class);
                   assertThat(attribute.value().value()).isEqualTo("BROWN_WHITE");
                 })
         )
@@ -79,10 +86,12 @@ class ProductResourceTest {
                 .hasSize(2)
                 .anySatisfy(attribute -> {
                   assertThat(attribute.type().value()).isEqualTo("SIZE_EU");
-                  assertThat(attribute.value().value()).isEqualTo("40");
+                  assertThat(attribute.value()).isInstanceOf(IntegerAttributeValue.class);
+                  assertThat(attribute.value().value()).isEqualTo(40);
                 })
                 .anySatisfy(attribute -> {
                   assertThat(attribute.type().value()).isEqualTo("COLORS");
+                  assertThat(attribute.value()).isInstanceOf(StringAttributeValue.class);
                   assertThat(attribute.value().value()).isEqualTo("RED_BLUE");
                 })
         );
@@ -121,10 +130,12 @@ class ProductResourceTest {
                     .hasSize(2)
                     .anySatisfy(attribute -> {
                       assertThat(attribute.type().value()).isEqualTo("SIZE_EU");
-                      assertThat(attribute.value().value()).isEqualTo("42");
+                      assertThat(attribute.value()).isInstanceOf(IntegerAttributeValue.class);
+                      assertThat(attribute.value().value()).isEqualTo(42);
                     })
                     .anySatisfy(attribute -> {
                       assertThat(attribute.type().value()).isEqualTo("COLORS");
+                      assertThat(attribute.value()).isInstanceOf(StringAttributeValue.class);
                       assertThat(attribute.value().value()).isEqualTo("BROWN_ORANGE");
                     })
         );
@@ -149,6 +160,7 @@ class ProductResourceTest {
             "attributes": [
               {
                 "type": "SIZE_EU",
+                "valueType": "INTEGER",
                 "value": "38"
               },
               {
@@ -161,6 +173,7 @@ class ProductResourceTest {
             "attributes": [
               {
                 "type": "SIZE_EU",
+                "valueType": "INTEGER",
                 "value": "40"
               },
               {
@@ -181,6 +194,7 @@ class ProductResourceTest {
             "attributes": [
               {
                 "type": "SIZE_EU",
+                "valueType": "INTEGER",
                 "value": "42"
               },
               {

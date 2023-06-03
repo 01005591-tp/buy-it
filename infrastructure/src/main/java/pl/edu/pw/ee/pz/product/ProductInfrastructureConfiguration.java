@@ -53,8 +53,11 @@ public class ProductInfrastructureConfiguration {
   }
 
   @Produces
-  AddVariationSqlOperation addVariationSqlOperation(PgPool pgPool) {
-    return new AddVariationSqlOperation(pgPool);
+  AddVariationSqlOperation addVariationSqlOperation(
+      PgPool pgPool,
+      InsertVariationsSqlOperation insertVariationsSqlOperation
+  ) {
+    return new AddVariationSqlOperation(pgPool, insertVariationsSqlOperation);
   }
 
   @Produces
