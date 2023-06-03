@@ -57,17 +57,17 @@ class ProductAggregateTest {
     var productVariation = new ProductVariation(
         new ProductVariationId(UUID.randomUUID()),
         Set.of(
-            new VariationAttribute(
+            new VariationAttribute<>(
                 new AttributeType("SIZE"),
-                new AttributeValue("42")
+                AttributeValue.integerAttribute(42)
             ),
-            new VariationAttribute(
+            new VariationAttribute<>(
                 new AttributeType("COLOR1"),
-                new AttributeValue("BROWN")
+                AttributeValue.stringAttribute("BROWN")
             ),
-            new VariationAttribute(
+            new VariationAttribute<>(
                 new AttributeType("COLOR2"),
-                new AttributeValue("GREEN")
+                AttributeValue.stringAttribute("GREEN")
             )
         )
     );
@@ -91,17 +91,17 @@ class ProductAggregateTest {
     var productVariation = new ProductVariation(
         new ProductVariationId(UUID.randomUUID()),
         Set.of(
-            new VariationAttribute(
+            new VariationAttribute<>(
                 new AttributeType("SIZE"),
-                new AttributeValue("42")
+                AttributeValue.integerAttribute(42)
             ),
-            new VariationAttribute(
+            new VariationAttribute<>(
                 new AttributeType("COLOR1"),
-                new AttributeValue("BROWN")
+                AttributeValue.stringAttribute("BROWN")
             ),
-            new VariationAttribute(
+            new VariationAttribute<>(
                 new AttributeType("COLOR2"),
-                new AttributeValue("GREEN")
+                AttributeValue.stringAttribute("GREEN")
             )
         )
     );
@@ -148,17 +148,17 @@ class ProductAggregateTest {
         new ProductVariation(
             new ProductVariationId(UUID.randomUUID()),
             Set.of(
-                new VariationAttribute(
+                new VariationAttribute<>(
                     new AttributeType("SIZE"),
-                    new AttributeValue("42")
+                    AttributeValue.integerAttribute(42)
                 ),
-                new VariationAttribute(
+                new VariationAttribute<>(
                     new AttributeType("COLOR1"),
-                    new AttributeValue("BROWN")
+                    AttributeValue.stringAttribute("BROWN")
                 ),
-                new VariationAttribute(
+                new VariationAttribute<>(
                     new AttributeType("COLOR2"),
-                    new AttributeValue("GREEN")
+                    AttributeValue.stringAttribute("GREEN")
                 )
             )
         )
@@ -169,17 +169,17 @@ class ProductAggregateTest {
         new ProductVariation(
             new ProductVariationId(UUID.randomUUID()),
             Set.of(
-                new VariationAttribute(
+                new VariationAttribute<>(
                     new AttributeType("SIZE"),
-                    new AttributeValue("40")
+                    AttributeValue.integerAttribute(40)
                 ),
-                new VariationAttribute(
+                new VariationAttribute<>(
                     new AttributeType("COLOR1"),
-                    new AttributeValue("BLACK")
+                    AttributeValue.stringAttribute("BLACK")
                 ),
-                new VariationAttribute(
+                new VariationAttribute<>(
                     new AttributeType("COLOR2"),
-                    new AttributeValue("WHITE")
+                    AttributeValue.stringAttribute("WHITE")
                 )
             )
         )

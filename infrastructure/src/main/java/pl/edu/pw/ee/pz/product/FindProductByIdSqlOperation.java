@@ -8,6 +8,7 @@ import io.vertx.mutiny.pgclient.PgPool;
 import io.vertx.mutiny.sqlclient.Row;
 import io.vertx.mutiny.sqlclient.RowSet;
 import io.vertx.mutiny.sqlclient.Tuple;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -26,6 +27,8 @@ import pl.edu.pw.ee.pz.sharedkernel.model.VariationAttribute.AttributeValue;
 @RequiredArgsConstructor(access = PACKAGE)
 class FindProductByIdSqlOperation {
 
+  private static final ProductVariationId EMPTY_PRODUCT_VARIATION_ID = new ProductVariationId(null);
+
   private final PgPool client;
 
   public Uni<Product> execute(ProductId id) {
@@ -37,11 +40,12 @@ class FindProductByIdSqlOperation {
               ,pva.variation_id
               ,pva.type
               ,pva.value
-            FROM 
+              ,pva.value_type
+            FROM
               products p
               LEFT JOIN product_variation_attributes pva ON
                 pva.product_id = p.id
-            WHERE 
+            WHERE
               p.id = $1
             """)
         .execute(Tuple.of(id.value()))
@@ -58,7 +62,9 @@ class FindProductByIdSqlOperation {
         row.getString("brand_id"),
         Objects.requireNonNullElse(row.getString("variation_id"), ""),
         row.getString("type"),
-        row.getString("value")
+        row.getString("value"),
+        ProductVariationAttributeValueType.tryParse(row.getString("value_type"))
+            .orElse(ProductVariationAttributeValueType.STRING)
     );
   }
 
@@ -80,15 +86,30 @@ class FindProductByIdSqlOperation {
     var variations = productAndVariations.stream().collect(groupingBy(ProductVariationAttributeView::variationId));
     return variations.entrySet().stream()
         .map(variation -> new ProductVariation(
-            new ProductVariationId(UUID.fromString(variation.getKey())),
+            toProductVariationId(variation.getKey()),
             variation.getValue().stream()
-                .map(attribute -> new VariationAttribute(
+                .map(attribute -> new VariationAttribute<>(
                     new AttributeType(attribute.attributeType()),
-                    new AttributeValue(attribute.attributeValue())
+                    toAttributeValue(attribute)
                 ))
                 .collect(Collectors.toUnmodifiableSet())
         ))
         .collect(Collectors.toUnmodifiableSet());
+  }
+
+  private static ProductVariationId toProductVariationId(String variationId) {
+    return variationId.isBlank()
+        ? EMPTY_PRODUCT_VARIATION_ID
+        : new ProductVariationId(UUID.fromString(variationId));
+  }
+
+  private static AttributeValue<?> toAttributeValue(ProductVariationAttributeView attribute) {
+    return switch (attribute.attributeValueType()) {
+      case STRING -> AttributeValue.stringAttribute(attribute.attributeValue());
+      case LONG -> AttributeValue.longAttribute(Long.parseLong(attribute.attributeValue()));
+      case INTEGER -> AttributeValue.integerAttribute(Integer.parseInt(attribute.attributeValue()));
+      case BIG_DECIMAL -> AttributeValue.bigDecimalAttribute(new BigDecimal(attribute.attributeValue()));
+    };
   }
 
   private record ProductVariationAttributeView(
@@ -97,7 +118,8 @@ class FindProductByIdSqlOperation {
       String brandId,
       String variationId,
       String attributeType,
-      String attributeValue
+      String attributeValue,
+      ProductVariationAttributeValueType attributeValueType
   ) {
 
   }

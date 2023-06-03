@@ -1,0 +1,14 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  logicalFilePath="2023/004-add-product-variation-attributes-value-type-column.xml"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+  <changeSet id="add-product-variation-attributes-value-type-column" author="tomasz.pazdziurek">
+    <addColumn tableName="product_variation_attributes">
+      <column name="value_type" type="VARCHAR(255)"/>
+    </addColumn>
+  </changeSet>
+
+</databaseChangeLog>
