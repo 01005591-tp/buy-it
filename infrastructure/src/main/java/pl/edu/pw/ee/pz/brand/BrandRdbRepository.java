@@ -53,9 +53,23 @@ class BrandRdbRepository implements BrandProjectionPort {
   @Override
   public Uni<PageResult<Brand>> findByCriteria(SearchCriteria criteria) {
     return client.preparedQuery("""
-            SELECT b.keyset_id, b.id, b.code, COUNT(1) OVER (PARTITION BY NULL) AS all_count FROM brands b WHERE b.code ILIKE $1 AND b.keyset_id > $2 LIMIT $3
+            SELECT
+              b.keyset_id
+              ,b.id
+              ,b.code
+              ,COUNT(1) OVER (PARTITION BY NULL) AS all_count
+            FROM
+              brands b
+            WHERE
+              b.code ILIKE $1
+              AND b.keyset_id > $2
+            LIMIT $3
             """)
-        .execute(Tuple.of(criteria.code(), criteria.requestedPage().keySetItemId(), criteria.requestedPage().size()))
+        .execute(Tuple.of(
+            criteria.code(),
+            criteria.requestedPage().keySetItemId(),
+            criteria.requestedPage().size()
+        ))
         .onItem().transform(rowSet -> {
           var records = StreamSupport.stream(rowSet.spliterator(), false)
               .map(row -> PageRecord.of(row, toBrand(row)))

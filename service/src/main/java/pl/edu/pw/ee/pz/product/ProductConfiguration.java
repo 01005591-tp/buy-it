@@ -36,4 +36,9 @@ public class ProductConfiguration {
   ) {
     return new ProductProjection(productProjectionPort, productAggregatePort);
   }
+
+  @Produces
+  ProductQueryHandler productQueryHandler(ProductProjectionPort productProjectionPort) {
+    return new ProductQueryHandler(productProjectionPort);
+  }
 }

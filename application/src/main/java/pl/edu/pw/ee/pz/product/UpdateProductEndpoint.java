@@ -18,7 +18,7 @@ class UpdateProductEndpoint {
   private final CommandHandlerExecutor commandHandlerExecutor;
   private final ProductVariationsMapper productVariationsMapper;
 
-  Uni<RestResponse<Void>> handle(String id, UpdateProductRequest request) {
+  Uni<RestResponse<?>> handle(String id, UpdateProductRequest request) {
     var productId = new ProductId(UUID.fromString(id));
     return commandHandlerExecutor.execute(new UpdateProductCommand(
             productId,
@@ -26,7 +26,7 @@ class UpdateProductEndpoint {
             new BrandId(UUID.fromString(request.brandId())),
             productVariationsMapper.toProductVariations(request.variations())
         ))
-        .onItem().<RestResponse<Void>>transform(success -> RestResponse.noContent())
+        .onItem().<RestResponse<?>>transform(success -> RestResponse.noContent())
         .onFailure(ProductNotFoundException.class).recoverWithItem(notFound -> RestResponse.notFound());
   }
 }

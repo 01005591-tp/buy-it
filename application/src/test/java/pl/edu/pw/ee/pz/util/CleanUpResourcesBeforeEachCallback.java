@@ -10,8 +10,8 @@ import io.vertx.mutiny.pgclient.PgPool;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.spi.CDI;
 import java.time.Duration;
+import java.util.List;
 import java.util.Set;
-import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.reactivestreams.FlowAdapters;
@@ -30,12 +30,46 @@ public class CleanUpResourcesBeforeEachCallback implements QuarkusTestBeforeEach
   }
 
   private void cleanUpPostgres(PgPool pgPool) {
-    var truncateTables = Stream.of("products", "brands")
+    cleanUpTables(pgPool);
+    resetSequences(pgPool);
+  }
+
+  private void cleanUpTables(PgPool pgPool) {
+    var tables = List.of(
+        "products",
+        "brands",
+        "product_variation_attributes"
+    );
+    var truncateTables = tables.stream()
         .map(table -> pgPool.preparedQuery("TRUNCATE TABLE %s".formatted(table)).execute())
         .toList();
     Uni.join().all(truncateTables)
         .andFailFast()
         .onFailure().invoke(throwable -> log.error("Could not clean up database before tests", throwable))
+        .onItem().invoke(() -> {
+          if (log.isDebugEnabled()) {
+            log.debug("Cleaned up tables {}", String.join(",", tables));
+          }
+        })
+        .await().atMost(Duration.ofSeconds(10L));
+  }
+
+  private void resetSequences(PgPool pgPool) {
+    var sequences = List.of(
+        "products_seq",
+        "brands_seq"
+    );
+    var resetSequences = sequences.stream()
+        .map(table -> pgPool.preparedQuery("ALTER SEQUENCE %s RESTART WITH 1".formatted(table)).execute())
+        .toList();
+    Uni.join().all(resetSequences)
+        .andFailFast()
+        .onFailure().invoke(throwable -> log.error("Could not reset sequences before tests", throwable))
+        .onItem().invoke(() -> {
+          if (log.isDebugEnabled()) {
+            log.debug("Rest sequences {}", String.join(",", sequences));
+          }
+        })
         .await().atMost(Duration.ofSeconds(10L));
   }
 

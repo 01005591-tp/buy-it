@@ -10,22 +10,28 @@ public record PageRecords<T>(
     List<PageRecord<T>> records
 ) {
 
+  public static <T> PageRecords<T> empty(RequestedPage requestedPage) {
+    return new PageRecords<>(requestedPage, List.of());
+  }
+
   public PageResult<T> toResult() {
     if (records.isEmpty()) {
-      return PageResult.emptyResult(requestedPage);
+      return PageResult.empty();
+    } else if (records.size() == 1) {
+      return PageResult.single(records.get(0).value());
     }
 
-    var lastRecord = records.get(records.size() - 1);
-    var elementId = lastRecord.elementId();
-    var allCount = lastRecord.allCount();
+    var firstRecord = records.get(0);
+    var allCount = firstRecord.allCount();
     var pageSize = requestedPage.size();
     var pagesCount = calculatePagesCount(allCount, pageSize);
-    var currentPage = allCount / pageSize + 1;
-    var resultPage = new ResultPage(elementId, requestedPage.size());
-    return new PageResult<>(
+    var currentPageSize = Math.min(requestedPage.size(), records.size());
+    var greatestElementId = records.stream().mapToLong(PageRecord::elementId).max().orElse(0L);
+    var resultPage = new ResultPage(currentPageSize, requestedPage.keySetItemId(), greatestElementId);
+    return PageResult.multi(
         resultPage,
         pagesCount,
-        currentPage,
+        allCount,
         unwrapRecords()
     );
   }

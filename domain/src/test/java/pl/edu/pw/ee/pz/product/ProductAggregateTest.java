@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThatCode;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import pl.edu.pw.ee.pz.product.event.ProductCreated;
@@ -56,7 +55,7 @@ class ProductAggregateTest {
     // and
     var productVariation = new ProductVariation(
         new ProductVariationId(UUID.randomUUID()),
-        Set.of(
+        List.of(
             new VariationAttribute<>(
                 new AttributeType("SIZE"),
                 AttributeValue.integerAttribute(42)
@@ -90,7 +89,7 @@ class ProductAggregateTest {
     // and
     var productVariation = new ProductVariation(
         new ProductVariationId(UUID.randomUUID()),
-        Set.of(
+        List.of(
             new VariationAttribute<>(
                 new AttributeType("SIZE"),
                 AttributeValue.integerAttribute(42)
@@ -122,7 +121,7 @@ class ProductAggregateTest {
     // given
     var product = newProduct();
     // and
-    var variation = new ProductVariation(new ProductVariationId(UUID.randomUUID()), Set.of());
+    var variation = new ProductVariation(new ProductVariationId(UUID.randomUUID()), List.of());
 
     // when
     var throwableAssert = assertThatCode(() -> product.removeVariation(variation));
@@ -147,7 +146,7 @@ class ProductAggregateTest {
         newDomainEventHeader(productId),
         new ProductVariation(
             new ProductVariationId(UUID.randomUUID()),
-            Set.of(
+            List.of(
                 new VariationAttribute<>(
                     new AttributeType("SIZE"),
                     AttributeValue.integerAttribute(42)
@@ -168,7 +167,7 @@ class ProductAggregateTest {
         newDomainEventHeader(productId),
         new ProductVariation(
             new ProductVariationId(UUID.randomUUID()),
-            Set.of(
+            List.of(
                 new VariationAttribute<>(
                     new AttributeType("SIZE"),
                     AttributeValue.integerAttribute(40)

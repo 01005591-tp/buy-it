@@ -14,7 +14,7 @@ import pl.edu.pw.ee.pz.sharedkernel.event.DomainEvent;
 import pl.edu.pw.ee.pz.sharedkernel.event.DomainEvent.EventId;
 import pl.edu.pw.ee.pz.sharedkernel.model.Address;
 import pl.edu.pw.ee.pz.sharedkernel.model.ProductId;
-import pl.edu.pw.ee.pz.sharedkernel.model.ProductVariation;
+import pl.edu.pw.ee.pz.sharedkernel.model.ProductVariationId;
 import pl.edu.pw.ee.pz.sharedkernel.model.StoreId;
 import pl.edu.pw.ee.pz.sharedkernel.model.Version;
 import pl.edu.pw.ee.pz.store.error.InsufficientProductVariationPiecesException;
@@ -30,7 +30,7 @@ public class StoreAggregate extends AggregateRoot<StoreId> {
   @Getter(PACKAGE)
   private Address address;
   @Getter(PACKAGE)
-  private final Map<ProductId, Map<ProductVariation, ProductVariationPieces>> products = new HashMap<>();
+  private final Map<ProductId, Map<ProductVariationId, ProductVariationPieces>> products = new HashMap<>();
 
   StoreAggregate(Version version, EventId latestEvent) {
     super(AGGREGATE_TYPE, version, latestEvent);
@@ -51,7 +51,9 @@ public class StoreAggregate extends AggregateRoot<StoreId> {
     handleAndRegisterEvent(event);
   }
 
-  public void addProductVariationPieces(ProductId product, ProductVariation variation, ProductVariationPieces pieces) {
+  public void addProductVariationPieces(
+      ProductId product, ProductVariationId variation, ProductVariationPieces pieces
+  ) {
     if (pieces.isNone()) {
       return;
     }
@@ -65,7 +67,7 @@ public class StoreAggregate extends AggregateRoot<StoreId> {
   }
 
   public void subtractProductVariationPieces(
-      ProductId product, ProductVariation variation, ProductVariationPieces pieces
+      ProductId product, ProductVariationId variation, ProductVariationPieces pieces
   ) {
     if (pieces.isNone()) {
       return;
@@ -91,7 +93,7 @@ public class StoreAggregate extends AggregateRoot<StoreId> {
   }
 
   @Override
-  protected void handle(DomainEvent event) {
+  protected void handle(DomainEvent<StoreId> event) {
     if (event instanceof StoreCreated created) {
       handle(created);
     } else if (event instanceof StoreAddressChanged addressChanged) {
@@ -115,7 +117,7 @@ public class StoreAggregate extends AggregateRoot<StoreId> {
   private void handle(ProductVariationPiecesAdded event) {
     this.products.compute(event.product(), (product, variations) -> {
       if (isNull(variations)) {
-        var newVariations = new HashMap<ProductVariation, ProductVariationPieces>();
+        var newVariations = new HashMap<ProductVariationId, ProductVariationPieces>();
         newVariations.put(event.variation(), event.pieces());
         return newVariations;
       } else {
@@ -141,7 +143,7 @@ public class StoreAggregate extends AggregateRoot<StoreId> {
       EventId latestEvent,
       StoreId id,
       Address address,
-      Map<ProductId, Map<ProductVariation, ProductVariationPieces>> products
+      Map<ProductId, Map<ProductVariationId, ProductVariationPieces>> products
   ) {
     var store = new StoreAggregate(version, latestEvent);
     store.id = id;
