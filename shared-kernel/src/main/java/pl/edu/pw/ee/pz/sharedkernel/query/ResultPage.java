@@ -2,16 +2,18 @@ package pl.edu.pw.ee.pz.sharedkernel.query;
 
 public record ResultPage(
     long size,
+    long prevKeySetId,
     long nextKeySetId
-
 ) {
 
-  public static ResultPage empty(RequestedPage requestedPage) {
-    return empty(requestedPage.size());
+  private static final ResultPage EMPTY = new ResultPage(0L, 0L, 0L);
+  private static final ResultPage SINGLE = new ResultPage(1L, 0L, 0L);
+
+  public static ResultPage empty() {
+    return EMPTY;
   }
 
-  public static ResultPage empty(long size) {
-    return new ResultPage(size, 0L);
+  public static ResultPage single() {
+    return SINGLE;
   }
-
 }

@@ -46,6 +46,12 @@
       <artifactId>jackson-datatype-jdk8</artifactId>
     </dependency>
 
+    <!-- Commons -->
+    <dependency>
+      <groupId>io.vavr</groupId>
+      <artifactId>vavr</artifactId>
+    </dependency>
+
     <!-- Tests -->
     <dependency>
       <groupId>org.junit.jupiter</groupId>

@@ -2,6 +2,7 @@ package pl.edu.pw.ee.pz.product;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Produces;
+import pl.edu.pw.ee.pz.shared.ProductDtoMapper;
 import pl.edu.pw.ee.pz.sharedkernel.command.CommandHandlerExecutor;
 
 @ApplicationScoped
@@ -26,5 +27,27 @@ public class ProductApplicationConfiguration {
       ProductVariationsMapper productVariationsMapper
   ) {
     return new UpdateProductEndpoint(commandHandlerExecutor, productVariationsMapper);
+  }
+
+  @Produces
+  SearchProductByIdEndpoint searchProductByIdEndpoint(
+      ProductQueryService productQueryService,
+      ProductDtoMapper productDtoMapper
+  ) {
+    return new SearchProductByIdEndpoint(
+        productQueryService,
+        productDtoMapper
+    );
+  }
+
+  @Produces
+  SearchProductByManagingCriteriaEndpoint searchProductByManagingCriteriaEndpoint(
+      ProductQueryService productQueryService,
+      ProductDtoMapper productDtoMapper
+  ) {
+    return new SearchProductByManagingCriteriaEndpoint(
+        productQueryService,
+        productDtoMapper
+    );
   }
 }

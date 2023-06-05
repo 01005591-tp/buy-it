@@ -21,7 +21,8 @@ public class ProductInfrastructureConfiguration {
       RemoveVariationSqlOperation removeVariationSqlOperation,
       ReplaceVariationsSqlOperation replaceVariationsSqlOperation,
       ChangeCodeSqlOperation changeCodeSqlOperation,
-      ChangeBrandSqlOperation changeBrandSqlOperation
+      ChangeBrandSqlOperation changeBrandSqlOperation,
+      FindProductsByBasicCriteriaSqlOperation findProductsByBasicCriteriaSqlOperation
   ) {
     return new ProductRdbRepository(
         insertProductSqlOperation,
@@ -30,8 +31,14 @@ public class ProductInfrastructureConfiguration {
         removeVariationSqlOperation,
         replaceVariationsSqlOperation,
         changeCodeSqlOperation,
-        changeBrandSqlOperation
+        changeBrandSqlOperation,
+        findProductsByBasicCriteriaSqlOperation
     );
+  }
+
+  @Produces
+  ProductDbMapper productDbMapper() {
+    return new ProductDbMapper();
   }
 
   @Produces
@@ -48,8 +55,11 @@ public class ProductInfrastructureConfiguration {
   }
 
   @Produces
-  FindProductByIdSqlOperation findProductByIdSqlOperation(PgPool pgPool) {
-    return new FindProductByIdSqlOperation(pgPool);
+  FindProductByIdSqlOperation findProductByIdSqlOperation(
+      PgPool pgPool,
+      ProductDbMapper productDbMapper
+  ) {
+    return new FindProductByIdSqlOperation(pgPool, productDbMapper);
   }
 
   @Produces
@@ -81,5 +91,16 @@ public class ProductInfrastructureConfiguration {
   @Produces
   ChangeBrandSqlOperation changeBrandSqlOperation(PgPool pgPool) {
     return new ChangeBrandSqlOperation(pgPool);
+  }
+
+  @Produces
+  FindProductsByBasicCriteriaSqlOperation findProductsByBasicCriteriaSqlOperation(
+      PgPool pgPool,
+      ProductDbMapper productDbMapper
+  ) {
+    return new FindProductsByBasicCriteriaSqlOperation(
+        pgPool,
+        productDbMapper
+    );
   }
 }

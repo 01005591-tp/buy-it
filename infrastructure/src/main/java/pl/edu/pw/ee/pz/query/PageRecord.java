@@ -8,6 +8,10 @@ public record PageRecord<T>(
     T value
 ) {
 
+  public <V> PageRecord<V> withValue(V value) {
+    return new PageRecord<>(elementId, allCount, value);
+  }
+
   public static <T> PageRecord<T> of(Row row, T value) {
     return new PageRecord<>(
         row.getLong("keyset_id"),
