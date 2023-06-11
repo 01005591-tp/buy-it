@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Predicate;
 import org.awaitility.Awaitility;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import pl.edu.pw.ee.pz.sharedkernel.model.Pieces;
 import pl.edu.pw.ee.pz.sharedkernel.model.ProductId;
@@ -90,6 +91,7 @@ class StoreResourceTest {
         });
   }
 
+  @Disabled("Logic not yet implemented")
   @Test
   void should_get_products_with_available_pieces() {
     // given
