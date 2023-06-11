@@ -15,7 +15,7 @@ class FindProductByIdSqlOperation {
   private final PgPool client;
   private final ProductDbMapper productDbMapper;
 
-  public Uni<Product> execute(ProductId id) {
+  Uni<Product> execute(ProductId id) {
     return client.preparedQuery("""
             SELECT
               p.id
@@ -38,6 +38,4 @@ class FindProductByIdSqlOperation {
         .collect().asList()
         .onItem().transform(productDbMapper::toProduct);
   }
-
-
 }

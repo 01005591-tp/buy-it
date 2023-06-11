@@ -14,7 +14,7 @@ class ChangeCodeSqlOperation {
 
   private final PgPool client;
 
-  public Uni<Void> execute(
+  Uni<Void> execute(
       ProductId product,
       ProductCode code
   ) {

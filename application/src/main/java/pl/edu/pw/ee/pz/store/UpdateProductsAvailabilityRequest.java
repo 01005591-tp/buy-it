@@ -2,7 +2,7 @@ package pl.edu.pw.ee.pz.store;
 
 import java.util.List;
 
-record UpdateProductAvailabilityRequest(
+record UpdateProductsAvailabilityRequest(
     List<UpdateProduct> products
 ) {
 

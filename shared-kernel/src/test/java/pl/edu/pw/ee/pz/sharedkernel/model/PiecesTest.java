@@ -1,12 +1,12 @@
-package pl.edu.pw.ee.pz.store;
+package pl.edu.pw.ee.pz.sharedkernel.model;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
-import pl.edu.pw.ee.pz.store.error.InvalidProductVariationPiecesException;
+import pl.edu.pw.ee.pz.sharedkernel.model.Pieces.InvalidPiecesCountException;
 
-class ProductVariationPiecesTest {
+class PiecesTest {
 
   @Test
   void should_instantiate_product_variation_pieces() {
@@ -14,20 +14,20 @@ class ProductVariationPiecesTest {
     var count = 5L;
 
     // when
-    var pieces = ProductVariationPieces.of(count);
+    var pieces = Pieces.of(count);
 
     // then
-    assertThat(pieces.count()).isEqualTo(count);
+    assertThat(pieces.value()).isEqualTo(count);
     assertThat(pieces.isNone()).isFalse();
   }
 
   @Test
   void should_instantiate_product_variation_pieces_with_null_count() {
     // when
-    var pieces = ProductVariationPieces.of(null);
+    var pieces = Pieces.of(null);
 
     // then
-    assertThat(pieces.count()).isEqualTo(0L);
+    assertThat(pieces.value()).isEqualTo(0L);
     assertThat(pieces.isNone()).isTrue();
   }
 
@@ -37,11 +37,11 @@ class ProductVariationPiecesTest {
     var count = -1L;
 
     // when
-    var throwableAssert = Assertions.assertThatCode(() -> ProductVariationPieces.of(count));
+    var throwableAssert = Assertions.assertThatCode(() -> Pieces.of(count));
 
     // then
     throwableAssert
-        .isInstanceOf(InvalidProductVariationPiecesException.class)
+        .isInstanceOf(InvalidPiecesCountException.class)
         .hasMessage("Pieces count cannot be negative. Requested count was " + count);
   }
 }

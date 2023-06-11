@@ -38,7 +38,9 @@ public class CleanUpResourcesBeforeEachCallback implements QuarkusTestBeforeEach
     var tables = List.of(
         "products",
         "brands",
-        "product_variation_attributes"
+        "product_variation_attributes",
+        "stores",
+        "store_product_pieces"
     );
     var truncateTables = tables.stream()
         .map(table -> pgPool.preparedQuery("TRUNCATE TABLE %s".formatted(table)).execute())

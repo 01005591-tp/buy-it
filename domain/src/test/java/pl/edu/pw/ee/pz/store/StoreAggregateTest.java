@@ -20,8 +20,10 @@ import pl.edu.pw.ee.pz.sharedkernel.model.Address.StreetName;
 import pl.edu.pw.ee.pz.sharedkernel.model.Address.ZipCode;
 import pl.edu.pw.ee.pz.sharedkernel.model.Country;
 import pl.edu.pw.ee.pz.sharedkernel.model.CountryCode;
+import pl.edu.pw.ee.pz.sharedkernel.model.Pieces;
 import pl.edu.pw.ee.pz.sharedkernel.model.ProductId;
 import pl.edu.pw.ee.pz.sharedkernel.model.ProductVariationId;
+import pl.edu.pw.ee.pz.sharedkernel.model.StoreCode;
 import pl.edu.pw.ee.pz.sharedkernel.model.StoreId;
 import pl.edu.pw.ee.pz.sharedkernel.model.Timestamp;
 import pl.edu.pw.ee.pz.sharedkernel.model.Version;
@@ -37,6 +39,7 @@ class StoreAggregateTest {
   void should_create_store() {
     // given
     var storeId = new StoreId(UUID.randomUUID());
+    var code = new StoreCode("STORE_1");
     var address = new Address(
         new Street(
             new StreetName("Street"),
@@ -50,11 +53,13 @@ class StoreAggregateTest {
     // when
     var store = new StoreAggregate(
         storeId,
+        code,
         address
     );
 
     // then
     assertThat(store.id()).isEqualTo(storeId);
+    assertThat(store.code()).isEqualTo(code);
     assertThat(store.address()).isEqualTo(address);
     assertThat(store.products()).isEmpty();
   }
@@ -89,7 +94,7 @@ class StoreAggregateTest {
     // and
     var productId = new ProductId(UUID.randomUUID());
     var variationId = new ProductVariationId(UUID.randomUUID());
-    var pieces = ProductVariationPieces.of(3L);
+    var pieces = Pieces.of(3L);
 
     // when
     store.addProductVariationPieces(productId, variationId, pieces);
@@ -115,10 +120,10 @@ class StoreAggregateTest {
     // and
     var productId = new ProductId(UUID.randomUUID());
     var variationId = new ProductVariationId(UUID.randomUUID());
-    store.addProductVariationPieces(productId, variationId, ProductVariationPieces.of(3L));
+    store.addProductVariationPieces(productId, variationId, Pieces.of(3L));
 
     // when
-    store.addProductVariationPieces(productId, variationId, ProductVariationPieces.of(2L));
+    store.addProductVariationPieces(productId, variationId, Pieces.of(2L));
 
     // then
     assertThat(store.products())
@@ -129,7 +134,7 @@ class StoreAggregateTest {
               .hasSize(1)
               .anySatisfy((variation, variationPieces) -> {
                 assertThat(variation).isEqualTo(variationId);
-                assertThat(variationPieces.count()).isEqualTo(5L);
+                assertThat(variationPieces.value()).isEqualTo(5L);
               });
         });
   }
@@ -141,10 +146,10 @@ class StoreAggregateTest {
     // and
     var productId = new ProductId(UUID.randomUUID());
     var variationId = new ProductVariationId(UUID.randomUUID());
-    store.addProductVariationPieces(productId, variationId, ProductVariationPieces.of(3L));
+    store.addProductVariationPieces(productId, variationId, Pieces.of(3L));
 
     // when
-    store.subtractProductVariationPieces(productId, variationId, ProductVariationPieces.of(3L));
+    store.subtractProductVariationPieces(productId, variationId, Pieces.of(3L));
 
     // then
     assertThat(store.products())
@@ -167,11 +172,11 @@ class StoreAggregateTest {
     // and
     var productId = new ProductId(UUID.randomUUID());
     var variationId = new ProductVariationId(UUID.randomUUID());
-    store.addProductVariationPieces(productId, variationId, ProductVariationPieces.of(2L));
+    store.addProductVariationPieces(productId, variationId, Pieces.of(2L));
 
     // when
     var throwableAssert = assertThatCode(
-        () -> store.subtractProductVariationPieces(productId, variationId, ProductVariationPieces.of(3L))
+        () -> store.subtractProductVariationPieces(productId, variationId, Pieces.of(3L))
     );
 
     // then
@@ -195,7 +200,7 @@ class StoreAggregateTest {
 
     // when
     var throwableAssert = assertThatCode(
-        () -> store.subtractProductVariationPieces(productId, variationId, ProductVariationPieces.of(3L))
+        () -> store.subtractProductVariationPieces(productId, variationId, Pieces.of(3L))
     );
 
     // then
@@ -219,14 +224,14 @@ class StoreAggregateTest {
         newDomainEventHeader(storeCreated.header().aggregateId()),
         productId,
         new ProductVariationId(UUID.randomUUID()),
-        ProductVariationPieces.of(5L)
+        Pieces.of(5L)
     );
     // and
     var productVariationPiecesRemoved = new ProductVariationPiecesRemoved(
         newDomainEventHeader(storeCreated.header().aggregateId()),
         productId,
         productVariationPiecesAdded.variation(),
-        ProductVariationPieces.of(3L)
+        Pieces.of(3L)
     );
     // and
     var addressChanged = new StoreAddressChanged(
@@ -260,7 +265,7 @@ class StoreAggregateTest {
         .allSatisfy((product, variations) ->
             assertThat(variations)
                 .hasSize(1)
-                .allSatisfy((variation, pieces) -> assertThat(pieces.count()).isEqualTo(2L))
+                .allSatisfy((variation, pieces) -> assertThat(pieces.value()).isEqualTo(2L))
         );
   }
 
@@ -274,14 +279,14 @@ class StoreAggregateTest {
         newDomainEventHeader(storeCreated.header().aggregateId()),
         productId,
         new ProductVariationId(UUID.randomUUID()),
-        ProductVariationPieces.of(5L)
+        Pieces.of(5L)
     );
     // and
     var productVariationPiecesRemoved = new ProductVariationPiecesRemoved(
         newDomainEventHeader(storeCreated.header().aggregateId()),
         productVariationPiecesAdded.product(),
         productVariationPiecesAdded.variation(),
-        ProductVariationPieces.of(3L)
+        Pieces.of(3L)
     );
     // and
     var addressChanged = new StoreAddressChanged(
@@ -329,6 +334,7 @@ class StoreAggregateTest {
   private StoreAggregate newStore() {
     return new StoreAggregate(
         new StoreId(UUID.randomUUID()),
+        new StoreCode("STORE_1"),
         new Address(
             new Street(
                 new StreetName("Street"),
@@ -345,6 +351,7 @@ class StoreAggregateTest {
     var storeId = new StoreId(UUID.randomUUID());
     return new StoreCreated(
         newDomainEventHeader(storeId),
+        new StoreCode("STORE_1"),
         new Address(
             new Street(
                 new StreetName("Street"),

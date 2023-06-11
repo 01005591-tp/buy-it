@@ -1,5 +1,7 @@
 package pl.edu.pw.ee.pz.brand;
 
+import static lombok.AccessLevel.PACKAGE;
+
 import io.smallrye.mutiny.Uni;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -15,8 +17,8 @@ import pl.edu.pw.ee.pz.file.UploadFileCommand;
 import pl.edu.pw.ee.pz.sharedkernel.command.CommandHandler;
 import pl.edu.pw.ee.pz.sharedkernel.model.BrandId;
 
-@RequiredArgsConstructor
-public class NewBrandCommandHandler implements CommandHandler<NewBrandCommand, BrandId> {
+@RequiredArgsConstructor(access = PACKAGE)
+class NewBrandCommandHandler implements CommandHandler<NewBrandCommand, BrandId> {
 
   // TODO: move it to external properties
   private static final String BRANDS_FILES_SPACE = "brands";

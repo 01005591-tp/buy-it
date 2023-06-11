@@ -17,7 +17,7 @@ class ReplaceVariationsSqlOperation {
   private final PgPool client;
   private final InsertVariationsSqlOperation insertVariationsSqlOperation;
 
-  public Uni<Void> execute(
+  Uni<Void> execute(
       ProductId product,
       List<ProductVariation> variations
   ) {

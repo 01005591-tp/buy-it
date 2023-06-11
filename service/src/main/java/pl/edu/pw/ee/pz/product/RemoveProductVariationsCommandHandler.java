@@ -1,12 +1,14 @@
 package pl.edu.pw.ee.pz.product;
 
+import static lombok.AccessLevel.PACKAGE;
+
 import io.smallrye.mutiny.Uni;
 import lombok.RequiredArgsConstructor;
 import pl.edu.pw.ee.pz.product.port.ProductAggregatePort;
 import pl.edu.pw.ee.pz.sharedkernel.command.CommandHandler.NoResultCommandHandler;
 
-@RequiredArgsConstructor
-public class RemoveProductVariationsCommandHandler implements NoResultCommandHandler<RemoveProductVariationsCommand> {
+@RequiredArgsConstructor(access = PACKAGE)
+class RemoveProductVariationsCommandHandler implements NoResultCommandHandler<RemoveProductVariationsCommand> {
 
   private final ProductAggregatePort productAggregatePort;
 

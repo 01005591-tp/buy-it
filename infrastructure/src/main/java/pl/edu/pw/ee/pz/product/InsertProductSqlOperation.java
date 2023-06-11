@@ -14,7 +14,7 @@ class InsertProductSqlOperation {
   private final PgPool client;
   private final InsertVariationsSqlOperation insertVariationsSqlOperation;
 
-  public Uni<Void> execute(Product product) {
+  Uni<Void> execute(Product product) {
     return client.withTransaction(sqlConnection ->
         sqlConnection.preparedQuery("""
                   INSERT INTO products (keyset_id, id, code, brand_id) VALUES (nextval('products_seq'), $1, $2, $3)

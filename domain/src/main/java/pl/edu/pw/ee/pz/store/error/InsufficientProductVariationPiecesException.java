@@ -1,8 +1,8 @@
 package pl.edu.pw.ee.pz.store.error;
 
+import pl.edu.pw.ee.pz.sharedkernel.model.Pieces;
 import pl.edu.pw.ee.pz.sharedkernel.model.ProductId;
 import pl.edu.pw.ee.pz.sharedkernel.model.ProductVariationId;
-import pl.edu.pw.ee.pz.store.ProductVariationPieces;
 
 public class InsufficientProductVariationPiecesException extends RuntimeException {
 
@@ -13,15 +13,15 @@ public class InsufficientProductVariationPiecesException extends RuntimeExceptio
   public static InsufficientProductVariationPiecesException insufficientPiecesForRemoval(
       ProductId product,
       ProductVariationId variation,
-      ProductVariationPieces pieces,
-      ProductVariationPieces removedPieces
+      Pieces pieces,
+      Pieces removedPieces
   ) {
     throw new InsufficientProductVariationPiecesException(
         "Product %s variation %s available pieces is %d. Tried to remove %d pieces".formatted(
             product.value(),
             variation.value(),
-            pieces.count(),
-            removedPieces.count()
+            pieces.value(),
+            removedPieces.value()
         )
     );
   }

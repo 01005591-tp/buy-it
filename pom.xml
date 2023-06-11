@@ -35,6 +35,7 @@
     <minio.version>8.5.2</minio.version>
     <okhttp.version>4.10.0</okhttp.version>
     <vavr.version>0.10.4</vavr.version>
+    <vavr-jackson.version>0.10.3</vavr-jackson.version>
     <skipITs>true</skipITs>
     <surefire-plugin.version>3.0.0-M7</surefire-plugin.version>
   </properties>
@@ -118,6 +119,11 @@
         <groupId>io.vavr</groupId>
         <artifactId>vavr</artifactId>
         <version>${vavr.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.vavr</groupId>
+        <artifactId>vavr-jackson</artifactId>
+        <version>${vavr-jackson.version}</version>
       </dependency>
 
       <!-- Test -->

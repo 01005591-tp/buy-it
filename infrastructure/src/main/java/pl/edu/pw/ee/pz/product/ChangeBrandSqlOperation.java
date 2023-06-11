@@ -14,7 +14,7 @@ class ChangeBrandSqlOperation {
 
   private final PgPool client;
 
-  public Uni<Void> execute(
+  Uni<Void> execute(
       ProductId product,
       BrandId brand
   ) {

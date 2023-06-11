@@ -27,37 +27,31 @@ public class ProductFixture {
   private final JsonSerializer jsonSerializer;
 
   public ProductId createProduct() {
-    // given
-    // when
     var response = RestAssured.given()
         .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
         .body(CREATE_PRODUCT_REQUEST)
         .when().post("/products")
         .thenReturn();
 
-    // then
     assertThat(response.statusCode()).isEqualTo(Status.CREATED.getStatusCode());
     var createProductResponse = response.body().as(CreateProductResponse.class);
     return new ProductId(UUID.fromString(createProductResponse.id()));
   }
 
   public ProductId createProduct(UnaryOperator<CreateProductSpecification> customizer) {
-    // given
     var specification = customizer.apply(defaultCreateProductSpecification());
     var requestPayload = jsonSerializer.serializeToBytes(specification);
-    // when
     var response = RestAssured.given()
         .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
         .body(requestPayload)
         .when().post("/products")
         .thenReturn();
-    // then
+
     assertThat(response.statusCode()).isEqualTo(Status.CREATED.getStatusCode());
     var createProductResponse = response.body().as(CreateProductResponse.class);
     return new ProductId(UUID.fromString(createProductResponse.id()));
   }
 
-  @SuppressWarnings("unchecked")
   private CreateProductSpecification defaultCreateProductSpecification() {
     return CreateProductSpecification.builder()
         .code("PRODUCT_CODE")
