@@ -17,7 +17,7 @@ import pl.edu.pw.ee.pz.sharedkernel.model.VariationAttribute.LongAttributeValue;
 @Slf4j
 class InsertVariationsSqlOperation {
 
-  public Uni<Void> execute(
+  Uni<Void> execute(
       SqlConnection sqlConnection,
       ProductId product,
       List<ProductVariation> variations
@@ -28,11 +28,11 @@ class InsertVariationsSqlOperation {
     return sqlConnection.preparedQuery("""
             INSERT INTO product_variation_attributes (variation_id, product_id, type, value_type, value) VALUES ($1, $2, $3, $4, $5)
             """)
-        .executeBatch(toQueryParams(product, variations))
+        .executeBatch(toSqlParams(product, variations))
         .replaceWithVoid();
   }
 
-  private static List<Tuple> toQueryParams(ProductId product, List<ProductVariation> variations) {
+  private static List<Tuple> toSqlParams(ProductId product, List<ProductVariation> variations) {
     return variations.stream()
         .flatMap(variation ->
             variation.attributes().stream()

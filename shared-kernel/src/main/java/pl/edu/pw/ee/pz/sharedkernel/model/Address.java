@@ -1,16 +1,27 @@
 package pl.edu.pw.ee.pz.sharedkernel.model;
 
+import io.vavr.control.Option;
+
 public record Address(
-    Street street,
-    City city,
-    ZipCode zipCode,
+    Option<Street> street,
+    Option<City> city,
+    Option<ZipCode> zipCode,
     Country country
 ) {
+
+  public Address(Street street, City city, ZipCode zipCode, Country country) {
+    this(
+        Option.of(street),
+        Option.of(city),
+        Option.of(zipCode),
+        country
+    );
+  }
 
   public record Street(
       StreetName name,
       HouseNo house,
-      FlatNo flatNo
+      Option<FlatNo> flatNo
   ) {
 
     public Street(StreetName name, HouseNo house) {

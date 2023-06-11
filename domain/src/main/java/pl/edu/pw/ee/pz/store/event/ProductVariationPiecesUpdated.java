@@ -1,14 +1,12 @@
 package pl.edu.pw.ee.pz.store.event;
 
 import pl.edu.pw.ee.pz.sharedkernel.event.DomainEvent;
-import pl.edu.pw.ee.pz.sharedkernel.model.Address;
-import pl.edu.pw.ee.pz.sharedkernel.model.StoreCode;
+import pl.edu.pw.ee.pz.sharedkernel.model.ProductVariationPieces;
 import pl.edu.pw.ee.pz.sharedkernel.model.StoreId;
 
-public record StoreCreated(
+public record ProductVariationPiecesUpdated(
     DomainEventHeader<StoreId> header,
-    StoreCode code,
-    Address address
+    ProductVariationPieces productVariationPieces
 ) implements DomainEvent<StoreId> {
 
 }

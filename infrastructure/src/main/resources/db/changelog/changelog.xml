@@ -8,5 +8,7 @@
   <include file="2023/002-create-brands-table.xml" relativeToChangelogFile="true"/>
   <include file="2023/003-create-product-variation-attributes-table.xml" relativeToChangelogFile="true"/>
   <include file="2023/004-add-product-variation-attributes-value-type-column.xml" relativeToChangelogFile="true"/>
+  <include file="2023/005-create-stores-table.xml" relativeToChangelogFile="true"/>
+  <include file="2023/006-create-store-product-pieces-table.xml" relativeToChangelogFile="true"/>
 
 </databaseChangeLog>

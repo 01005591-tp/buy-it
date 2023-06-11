@@ -4,14 +4,21 @@ import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.toMap;
 import static lombok.AccessLevel.PRIVATE;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonCreator.Mode;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.function.Function;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 import pl.edu.pw.ee.pz.sharedkernel.model.CountryCodeProvider.JdkCountryCodeProvider;
 
+@ToString
+@EqualsAndHashCode
 @RequiredArgsConstructor(access = PRIVATE)
 public class CountryCode {
 
@@ -25,10 +32,12 @@ public class CountryCode {
         .collect(toMap(Function.identity(), CountryCode::new));
   }
 
+  @JsonProperty
   @Getter
   @Accessors(fluent = true)
   private final String value;
 
+  @JsonCreator(mode = Mode.PROPERTIES)
   public static CountryCode of(String value) {
     if (isNull(value)) {
       throw InvalidCountryCodeException.missingCode();

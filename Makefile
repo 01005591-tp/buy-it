@@ -10,7 +10,8 @@ clean:
 package:
 	./mvnw package
 
-clean-package: clean package
+clean-package:
+	./mvnw clean package
 
 check-vulnerabilities:
 	./mvnw org.owasp:dependency-check-maven:aggregate

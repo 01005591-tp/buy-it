@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
+import io.vavr.jackson.datatype.VavrModule;
 import pl.edu.pw.ee.pz.sharedkernel.function.ExceptionUtil;
 
 public class JsonSerializer {
@@ -20,6 +21,7 @@ public class JsonSerializer {
       .addModule(new ParameterNamesModule())
       .addModule(new JavaTimeModule())
       .addModule(new Jdk8Module())
+      .addModule(new VavrModule())
       .build();
 
   public String serialize(Object object) {

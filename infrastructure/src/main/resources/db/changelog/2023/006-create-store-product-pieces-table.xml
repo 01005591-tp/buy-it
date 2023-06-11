@@ -1,0 +1,27 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  logicalFilePath="2023/006-create-store-product-pieces-table.xml"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+  <changeSet id="create-store-product-pieces" author="tomasz.pazdziurek">
+    <createTable tableName="store_product_pieces">
+      <column name="store_id" type="VARCHAR(36)" remarks="Store ID">
+        <constraints nullable="false"/>
+      </column>
+      <column name="product_id" type="VARCHAR(36)" remarks="Product ID">
+        <constraints nullable="false"/>
+      </column>
+      <column name="variation_id" type="VARCHAR(36)" remarks="Product Variation ID">
+        <constraints nullable="false"/>
+      </column>
+      <column name="pieces" type="BIGINT" defaultValue="0">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="store_product_pieces" columnNames="store_id,product_id,variation_id"/>
+  </changeSet>
+
+</databaseChangeLog>

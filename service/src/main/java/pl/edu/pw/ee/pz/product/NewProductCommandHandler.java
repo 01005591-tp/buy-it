@@ -1,5 +1,7 @@
 package pl.edu.pw.ee.pz.product;
 
+import static lombok.AccessLevel.PACKAGE;
+
 import io.smallrye.mutiny.Uni;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -9,8 +11,8 @@ import pl.edu.pw.ee.pz.sharedkernel.model.ProductId;
 import pl.edu.pw.ee.pz.sharedkernel.model.ProductVariation;
 import pl.edu.pw.ee.pz.sharedkernel.model.ProductVariationId;
 
-@RequiredArgsConstructor
-public class NewProductCommandHandler implements CommandHandler<NewProductCommand, ProductId> {
+@RequiredArgsConstructor(access = PACKAGE)
+class NewProductCommandHandler implements CommandHandler<NewProductCommand, ProductId> {
 
   private final ProductAggregatePort productAggregatePort;
 

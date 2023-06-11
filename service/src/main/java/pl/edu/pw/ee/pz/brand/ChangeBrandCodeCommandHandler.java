@@ -1,12 +1,14 @@
 package pl.edu.pw.ee.pz.brand;
 
+import static lombok.AccessLevel.PACKAGE;
+
 import io.smallrye.mutiny.Uni;
 import lombok.RequiredArgsConstructor;
 import pl.edu.pw.ee.pz.brand.port.BrandAggregatePort;
 import pl.edu.pw.ee.pz.sharedkernel.command.CommandHandler.NoResultCommandHandler;
 
-@RequiredArgsConstructor
-public class ChangeBrandCodeCommandHandler implements NoResultCommandHandler<ChangeBrandCodeCommand> {
+@RequiredArgsConstructor(access = PACKAGE)
+class ChangeBrandCodeCommandHandler implements NoResultCommandHandler<ChangeBrandCodeCommand> {
 
   private final BrandAggregatePort brandAggregatePort;
 
