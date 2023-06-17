@@ -17,9 +17,14 @@ public class StoreInfrastructureConfiguration {
   @Produces
   StoreProjectionPort storeProjectionPort(
       InsertStoreSqlOperation insertStoreSqlOperation,
-      FindStoreByIdSqlOperation findStoreByIdSqlOperation
+      FindStoreByIdSqlOperation findStoreByIdSqlOperation,
+      UpdateProductsVariationsSqlOperation updateProductsVariationsSqlOperation
   ) {
-    return new StoreRdbRepository(insertStoreSqlOperation, findStoreByIdSqlOperation);
+    return new StoreRdbRepository(
+        insertStoreSqlOperation,
+        findStoreByIdSqlOperation,
+        updateProductsVariationsSqlOperation
+    );
   }
 
   @Produces
@@ -38,5 +43,13 @@ public class StoreInfrastructureConfiguration {
       InsertVariationPiecesSqlOperation insertVariationPiecesSqlOperation
   ) {
     return new InsertStoreSqlOperation(pgPool, insertVariationPiecesSqlOperation);
+  }
+
+  @Produces
+  UpdateProductsVariationsSqlOperation updateProductsVariationsSqlOperation(
+      PgPool pgPool,
+      InsertVariationPiecesSqlOperation insertVariationPiecesSqlOperation
+  ) {
+    return new UpdateProductsVariationsSqlOperation(pgPool, insertVariationPiecesSqlOperation);
   }
 }

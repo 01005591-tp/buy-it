@@ -51,7 +51,7 @@ class StoreResourceTest {
     var store = findStoreProjectionById(storeId, Objects::nonNull);
     assertThat(store.id()).isEqualTo(storeId);
     assertThat(store.code().value()).isEqualTo("STORE_1");
-//    assertStoreCreatedProducts(store.products());
+    assertStoreCreatedProducts(store.products());
   }
 
   private static void assertStoreCreatedProducts(

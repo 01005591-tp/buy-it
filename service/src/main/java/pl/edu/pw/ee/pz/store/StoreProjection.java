@@ -54,8 +54,16 @@ class StoreProjection implements Projection {
   }
 
   private Uni<Void> handle(ProductVariationPiecesUpdated event) {
-    log.error("Projection event handling not yet implemented for event ProductVariationPiecesUpdated {}", event);
-    return Uni.createFrom().voidItem();
+    return storeProjectionPort.updateProductsVariations(
+            event.header().aggregateId(),
+            event.productVariationPieces().product(),
+            event.productVariationPieces().variationPieces()
+        )
+        .onItem().invoke(() -> log.info(
+            "Store product variation pieces stored. Store: {}, Product: {}",
+            event.header().aggregateId().value(),
+            event.productVariationPieces().product().value()
+        ));
   }
 
   private Uni<Void> recover(DomainEvent<StoreId> event, Throwable throwable) {
