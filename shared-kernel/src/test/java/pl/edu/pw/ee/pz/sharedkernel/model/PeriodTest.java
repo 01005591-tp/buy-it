@@ -3,7 +3,6 @@ package pl.edu.pw.ee.pz.sharedkernel.model;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.vavr.control.Option;
-import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.util.NoSuchElementException;
 import org.assertj.core.api.Assertions;
@@ -24,8 +23,8 @@ class PeriodTest {
     @Test
     void should_instantiate_valid_defined_period_starting_from() {
       // given
-      var from = toInstant("2023-06-15T00:00:00Z");
-      var to = toInstant("2023-06-15T00:00:01Z");
+      var from = toOffsetDateTime("2023-06-15T00:00:00Z");
+      var to = toOffsetDateTime("2023-06-15T00:00:01Z");
 
       // when
       var period = Period.builder()
@@ -42,8 +41,8 @@ class PeriodTest {
     @Test
     void should_instantiate_valid_defined_period_starting_to() {
       // given
-      var from = toInstant("2023-06-15T00:00:00Z");
-      var to = toInstant("2023-06-15T00:00:01Z");
+      var from = toOffsetDateTime("2023-06-15T00:00:00Z");
+      var to = toOffsetDateTime("2023-06-15T00:00:01Z");
 
       // when
       var period = Period.builder()
@@ -60,7 +59,7 @@ class PeriodTest {
     @Test
     void should_instantiate_valid_from_undefined_starting_from() {
       // given
-      var to = toInstant("2023-06-15T00:00:01Z");
+      var to = toOffsetDateTime("2023-06-15T00:00:01Z");
 
       // when
       var period = Period.builder()
@@ -76,7 +75,7 @@ class PeriodTest {
     @Test
     void should_instantiate_valid_from_undefined_starting_to() {
       // given
-      var to = toInstant("2023-06-15T00:00:01Z");
+      var to = toOffsetDateTime("2023-06-15T00:00:01Z");
 
       // when
       var period = Period.builder()
@@ -92,7 +91,7 @@ class PeriodTest {
     @Test
     void should_instantiate_valid_to_undefined_starting_from() {
       // given
-      var from = toInstant("2023-06-15T00:00:00Z");
+      var from = toOffsetDateTime("2023-06-15T00:00:00Z");
 
       // when
       var period = Period.builder()
@@ -108,7 +107,7 @@ class PeriodTest {
     @Test
     void should_instantiate_valid_to_undefined_starting_to() {
       // given
-      var from = toInstant("2023-06-15T00:00:00Z");
+      var from = toOffsetDateTime("2023-06-15T00:00:00Z");
 
       // when
       var period = Period.builder()
@@ -166,8 +165,8 @@ class PeriodTest {
     @Test
     void should_fail_instantiation_from_after_to_starting_from() {
       // given
-      var from = toInstant("2023-06-15T00:00:01Z");
-      var to = toInstant("2023-06-15T00:00:00Z");
+      var from = toOffsetDateTime("2023-06-15T00:00:01Z");
+      var to = toOffsetDateTime("2023-06-15T00:00:00Z");
 
       // when
       var throwableAssert = Assertions.assertThatCode(() ->
@@ -183,8 +182,8 @@ class PeriodTest {
     @Test
     void should_fail_instantiation_from_after_to_starting_to() {
       // given
-      var from = toInstant("2023-06-15T00:00:01Z");
-      var to = toInstant("2023-06-15T00:00:00Z");
+      var from = toOffsetDateTime("2023-06-15T00:00:01Z");
+      var to = toOffsetDateTime("2023-06-15T00:00:00Z");
 
       // when
       var throwableAssert = Assertions.assertThatCode(() ->
@@ -200,8 +199,8 @@ class PeriodTest {
     @Test
     void should_fail_instantiation_from_and_to_equal_starting_from() {
       // given
-      var from = toInstant("2023-06-15T00:00:00Z");
-      var to = toInstant("2023-06-15T00:00:00Z");
+      var from = toOffsetDateTime("2023-06-15T00:00:00Z");
+      var to = toOffsetDateTime("2023-06-15T00:00:00Z");
 
       // when
       var throwableAssert = Assertions.assertThatCode(() ->
@@ -217,8 +216,8 @@ class PeriodTest {
     @Test
     void should_fail_instantiation_from_and_to_equal_starting_to() {
       // given
-      var from = toInstant("2023-06-15T00:00:00Z");
-      var to = toInstant("2023-06-15T00:00:00Z");
+      var from = toOffsetDateTime("2023-06-15T00:00:00Z");
+      var to = toOffsetDateTime("2023-06-15T00:00:00Z");
 
       // when
       var throwableAssert = Assertions.assertThatCode(() ->
@@ -234,7 +233,7 @@ class PeriodTest {
     @Test
     void should_fail_instantiation_from_undefined_starting_from() {
       // given
-      var to = toInstant("2023-06-15T00:00:00Z");
+      var to = toOffsetDateTime("2023-06-15T00:00:00Z");
 
       // when
       var throwableAssert = Assertions.assertThatCode(() ->
@@ -250,7 +249,7 @@ class PeriodTest {
     @Test
     void should_fail_instantiation_from_undefined_starting_to() {
       // given
-      var to = toInstant("2023-06-15T00:00:00Z");
+      var to = toOffsetDateTime("2023-06-15T00:00:00Z");
 
       // when
       var throwableAssert = Assertions.assertThatCode(() ->
@@ -292,7 +291,7 @@ class PeriodTest {
     @Test
     void should_fail_instantiation_to_undefined_starting_from() {
       // given
-      var from = toInstant("2023-06-15T00:00:00Z");
+      var from = toOffsetDateTime("2023-06-15T00:00:00Z");
 
       // when
       var throwableAssert = Assertions.assertThatCode(() ->
@@ -308,7 +307,7 @@ class PeriodTest {
     @Test
     void should_fail_instantiation_to_undefined_starting_to() {
       // given
-      var from = toInstant("2023-06-15T00:00:00Z");
+      var from = toOffsetDateTime("2023-06-15T00:00:00Z");
 
       // when
       var throwableAssert = Assertions.assertThatCode(() ->
@@ -354,9 +353,9 @@ class PeriodTest {
     @Test
     void should_modify_to_value() {
       // given
-      var from = toInstant("2023-06-15T00:00:00Z");
-      var to = toInstant("2023-06-15T00:00:01Z");
-      var toChanged = toInstant("2023-06-15T00:00:05Z");
+      var from = toOffsetDateTime("2023-06-15T00:00:00Z");
+      var to = toOffsetDateTime("2023-06-15T00:00:01Z");
+      var toChanged = toOffsetDateTime("2023-06-15T00:00:05Z");
       var period = Period.builder()
           .from(from)
           .to(to);
@@ -375,9 +374,9 @@ class PeriodTest {
     @Test
     void should_modify_to_value_to_undefined() {
       // given
-      var from = toInstant("2023-06-15T00:00:00Z");
-      var to = toInstant("2023-06-15T00:00:01Z");
-      var toChanged = toInstant("2023-06-15T00:00:05Z");
+      var from = toOffsetDateTime("2023-06-15T00:00:00Z");
+      var to = toOffsetDateTime("2023-06-15T00:00:01Z");
+      var toChanged = toOffsetDateTime("2023-06-15T00:00:05Z");
       var period = Period.builder()
           .from(from)
           .to(to);
@@ -395,9 +394,9 @@ class PeriodTest {
     @Test
     void should_modify_from_value() {
       // given
-      var from = toInstant("2023-06-15T00:00:01Z");
-      var to = toInstant("2023-06-15T00:00:02Z");
-      var fromChanged = toInstant("2023-06-15T00:00:00Z");
+      var from = toOffsetDateTime("2023-06-15T00:00:01Z");
+      var to = toOffsetDateTime("2023-06-15T00:00:02Z");
+      var fromChanged = toOffsetDateTime("2023-06-15T00:00:00Z");
       var period = Period.builder()
           .from(from)
           .to(to);
@@ -416,8 +415,8 @@ class PeriodTest {
     @Test
     void should_modify_from_value_to_undefined() {
       // given
-      var from = toInstant("2023-06-15T00:00:00Z");
-      var to = toInstant("2023-06-15T00:00:01Z");
+      var from = toOffsetDateTime("2023-06-15T00:00:00Z");
+      var to = toOffsetDateTime("2023-06-15T00:00:01Z");
       var period = Period.builder()
           .from(from)
           .to(to);
@@ -611,8 +610,8 @@ class PeriodTest {
   }
 
   private static Period toPeriod(String maybeFrom, String maybeTo) {
-    var from = tryParseToInstant(maybeFrom);
-    var to = tryParseToInstant(maybeTo);
+    var from = tryParseToOffsetDateTime(maybeFrom);
+    var to = tryParseToOffsetDateTime(maybeTo);
 
     if (from.isEmpty() && to.isEmpty()) {
       return Period.builder().fromUndefined().toUndefined();
@@ -625,13 +624,12 @@ class PeriodTest {
         .getOrElseThrow(NoSuchElementException::new);
   }
 
-  private static Option<Instant> tryParseToInstant(String utcDateTime) {
+  private static Option<OffsetDateTime> tryParseToOffsetDateTime(String utcDateTime) {
     return Option.of(utcDateTime)
-        .map(OffsetDateTime::parse)
-        .map(OffsetDateTime::toInstant);
+        .map(OffsetDateTime::parse);
   }
 
-  private static Instant toInstant(String utcDateTime) {
-    return OffsetDateTime.parse(utcDateTime).toInstant();
+  private static OffsetDateTime toOffsetDateTime(String utcDateTime) {
+    return OffsetDateTime.parse(utcDateTime);
   }
 }

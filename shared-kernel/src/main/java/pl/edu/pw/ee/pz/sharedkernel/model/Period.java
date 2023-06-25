@@ -4,7 +4,7 @@ import static java.util.Objects.isNull;
 import static lombok.AccessLevel.PRIVATE;
 
 import io.vavr.control.Option;
-import java.time.Instant;
+import java.time.OffsetDateTime;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -18,8 +18,8 @@ public final class Period {
 
   private static final Period UNDEFINED = new Period(Option.none(), Option.none());
 
-  private final Option<Instant> from;
-  private final Option<Instant> to;
+  private final Option<OffsetDateTime> from;
+  private final Option<OffsetDateTime> to;
 
   public boolean overlaps(Period other) {
     return firstOverlaps(this, other) || firstOverlaps(other, this);
@@ -41,7 +41,7 @@ public final class Period {
     );
   }
 
-  private static boolean isBeforeOrEqualTo(Option<Instant> maybeFirst, Option<Instant> maybeSecond) {
+  private static boolean isBeforeOrEqualTo(Option<OffsetDateTime> maybeFirst, Option<OffsetDateTime> maybeSecond) {
     return maybeFirst.isEmpty() || maybeSecond.isEmpty()
         || maybeFirst.filter(first ->
             maybeSecond.filter(second -> isBeforeOrEqualTo(first, second)).isDefined()
@@ -49,11 +49,11 @@ public final class Period {
         .isDefined();
   }
 
-  private static boolean isBeforeOrEqualTo(Instant first, Instant second) {
+  private static boolean isBeforeOrEqualTo(OffsetDateTime first, OffsetDateTime second) {
     return first.isBefore(second) || first.equals(second);
   }
 
-  private static boolean isAfter(Option<Instant> maybeFirst, Option<Instant> maybeSecond) {
+  private static boolean isAfter(Option<OffsetDateTime> maybeFirst, Option<OffsetDateTime> maybeSecond) {
     return maybeFirst.isEmpty()
         || maybeFirst.filter(first ->
             maybeSecond.filter(first::isAfter).isDefined()
@@ -70,7 +70,7 @@ public final class Period {
 
     private static final PeriodBuilderEmpty INSTANCE = new PeriodBuilderEmpty();
 
-    public PeriodBuilderWithFrom from(Instant from) {
+    public PeriodBuilderWithFrom from(OffsetDateTime from) {
       if (isNull(from)) {
         throw new FromUndefinedException();
       }
@@ -81,7 +81,7 @@ public final class Period {
       return PeriodBuilderWithFrom.FROM_UNDEFINED;
     }
 
-    public PeriodBuilderWithTo to(Instant to) {
+    public PeriodBuilderWithTo to(OffsetDateTime to) {
       if (isNull(to)) {
         throw new ToUndefinedException();
       }
@@ -98,9 +98,9 @@ public final class Period {
 
     private static final PeriodBuilderWithFrom FROM_UNDEFINED = new PeriodBuilderWithFrom(Option.none());
 
-    private final Option<Instant> from;
+    private final Option<OffsetDateTime> from;
 
-    public Period to(Instant to) {
+    public Period to(OffsetDateTime to) {
       if (isNull(to)) {
         throw new ToUndefinedException();
       }
@@ -132,9 +132,9 @@ public final class Period {
   public static class PeriodBuilderWithTo {
 
     private static final PeriodBuilderWithTo TO_UNDEFINED = new PeriodBuilderWithTo(Option.none());
-    private final Option<Instant> to;
+    private final Option<OffsetDateTime> to;
 
-    public Period from(Instant from) {
+    public Period from(OffsetDateTime from) {
       if (isNull(from)) {
         throw new FromUndefinedException();
       }
@@ -171,7 +171,7 @@ public final class Period {
 
   public static class FromAndToEqualException extends InvalidPeriodException {
 
-    private FromAndToEqualException(Instant value) {
+    private FromAndToEqualException(OffsetDateTime value) {
       super("Parameters \"from\" and \"to\" cannot be equal. Got %s".formatted(value.toString()));
     }
   }
@@ -180,13 +180,13 @@ public final class Period {
   @Accessors(fluent = true)
   public static class FromAfterToException extends InvalidPeriodException {
 
-    private final Option<Instant> from;
-    private final Option<Instant> to;
+    private final Option<OffsetDateTime> from;
+    private final Option<OffsetDateTime> to;
 
-    private FromAfterToException(Option<Instant> from, Option<Instant> to) {
+    private FromAfterToException(Option<OffsetDateTime> from, Option<OffsetDateTime> to) {
       super("From %s cannot be after to %s".formatted(
-          from.map(Instant::toString).getOrElse("-∞"),
-          to.map(Instant::toString).getOrElse("+∞")
+          from.map(OffsetDateTime::toString).getOrElse("-∞"),
+          to.map(OffsetDateTime::toString).getOrElse("+∞")
       ));
       this.from = from;
       this.to = to;
