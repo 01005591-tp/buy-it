@@ -2,7 +2,7 @@ package pl.edu.pw.ee.pz.shared;
 
 import java.util.stream.Collectors;
 import pl.edu.pw.ee.pz.product.Product;
-import pl.edu.pw.ee.pz.shared.Attribute.AttributeValue;
+import pl.edu.pw.ee.pz.shared.AttributeDto.AttributeValueDto;
 import pl.edu.pw.ee.pz.sharedkernel.model.ProductVariation;
 
 public class ProductDtoMapper {
@@ -22,9 +22,9 @@ public class ProductDtoMapper {
     return new Variation(
         variation.id().value(),
         variation.attributes().stream()
-            .map(attribute -> new Attribute<>(
+            .map(attribute -> new AttributeDto<>(
                 attribute.type().value(),
-                AttributeValue.of(attribute.value())
+                AttributeValueDto.of(attribute.value())
             ))
             .collect(Collectors.toUnmodifiableList())
     );

@@ -18,4 +18,11 @@ public class StoreConfiguration {
   ) {
     return new UpdateProductsAvailabilityCommandHandler(storeAggregatePort);
   }
+
+  @Produces
+  CreateStoreCommandHandler createStoreCommandHandler(
+      StoreAggregatePort storeAggregatePort
+  ) {
+    return new CreateStoreCommandHandler(storeAggregatePort);
+  }
 }

@@ -2,16 +2,24 @@ package pl.edu.pw.ee.pz;
 
 import static lombok.AccessLevel.PRIVATE;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
+import lombok.Value;
+import lombok.experimental.Accessors;
 import org.apache.commons.lang3.StringUtils;
 
+@Value
+@Accessors(fluent = true)
 @Builder
 @RequiredArgsConstructor(access = PRIVATE)
 public class HttpApiError {
 
+  @JsonProperty
   private final String code;
+  @JsonProperty
   private final String title;
+  @JsonProperty
   private final String detail;
 
   public static BuilderWithCode ofCode(String code) {

@@ -16,7 +16,7 @@ import lombok.Singular;
 import lombok.With;
 import pl.edu.pw.ee.pz.product.ProductFixture.CreateProductSpecification.Attribute;
 import pl.edu.pw.ee.pz.product.ProductFixture.CreateProductSpecification.Variation;
-import pl.edu.pw.ee.pz.shared.Attribute.AttributeValue;
+import pl.edu.pw.ee.pz.shared.AttributeDto.AttributeValueDto;
 import pl.edu.pw.ee.pz.sharedkernel.json.JsonSerializer;
 import pl.edu.pw.ee.pz.sharedkernel.model.ProductId;
 
@@ -59,21 +59,21 @@ public class ProductFixture {
         .variation(Variation.builder()
             .attribute(Attribute.builder()
                 .type("SIZE_EU")
-                .value(AttributeValue.integerAttribute(38))
+                .value(AttributeValueDto.integerAttribute(38))
                 .build())
             .attribute(Attribute.builder()
                 .type("COLORS")
-                .value(AttributeValue.stringAttribute("BROWN_WHITE"))
+                .value(AttributeValueDto.stringAttribute("BROWN_WHITE"))
                 .build())
             .build())
         .variation(Variation.builder()
             .attribute(Attribute.builder()
                 .type("SIZE_EU")
-                .value(AttributeValue.integerAttribute(40))
+                .value(AttributeValueDto.integerAttribute(40))
                 .build())
             .attribute(Attribute.builder()
                 .type("COLORS")
-                .value(AttributeValue.stringAttribute("RED_BLUE"))
+                .value(AttributeValueDto.stringAttribute("RED_BLUE"))
                 .build())
             .build())
         .build();
@@ -102,7 +102,7 @@ public class ProductFixture {
     @Builder(toBuilder = true)
     public record Attribute(
         String type,
-        pl.edu.pw.ee.pz.shared.Attribute.AttributeValue<?> value
+        AttributeValueDto<?> value
     ) {
 
     }

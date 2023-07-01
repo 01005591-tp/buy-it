@@ -33,7 +33,7 @@ class SimpleCommandHandlerExecutor implements CommandHandlerExecutor {
     var handler = handlers.get(command.getClass());
     var commandType = command.getClass().getSimpleName();
     if (isNull(handler)) {
-      log.warn("Missing handler for command {}", commandType);
+      log.error("Missing handler for command {}", commandType);
       return Uni.createFrom().item(() -> null);
     }
     return doHandle(commandType, command, handler);

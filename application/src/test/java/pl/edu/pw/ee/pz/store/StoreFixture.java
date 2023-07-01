@@ -8,33 +8,23 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response.Status;
-import java.time.Duration;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.function.UnaryOperator;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import lombok.Singular;
 import lombok.With;
+import pl.edu.pw.ee.pz.shared.AddressDto;
+import pl.edu.pw.ee.pz.shared.AddressDto.StreetDto;
 import pl.edu.pw.ee.pz.sharedkernel.json.JsonSerializer;
-import pl.edu.pw.ee.pz.sharedkernel.model.Address;
-import pl.edu.pw.ee.pz.sharedkernel.model.Address.City;
-import pl.edu.pw.ee.pz.sharedkernel.model.Address.FlatNo;
-import pl.edu.pw.ee.pz.sharedkernel.model.Address.HouseNo;
-import pl.edu.pw.ee.pz.sharedkernel.model.Address.Street;
-import pl.edu.pw.ee.pz.sharedkernel.model.Address.StreetName;
-import pl.edu.pw.ee.pz.sharedkernel.model.Address.ZipCode;
-import pl.edu.pw.ee.pz.sharedkernel.model.Country;
-import pl.edu.pw.ee.pz.sharedkernel.model.CountryCode;
-import pl.edu.pw.ee.pz.sharedkernel.model.StoreCode;
 import pl.edu.pw.ee.pz.sharedkernel.model.StoreId;
-import pl.edu.pw.ee.pz.store.port.StoreAggregatePort;
 
 @ApplicationScoped
 @RequiredArgsConstructor
 public class StoreFixture {
 
-  private final StoreAggregatePort storeAggregatePort;
   private final JsonSerializer jsonSerializer;
 
   public StoreId createStore() {
@@ -43,10 +33,15 @@ public class StoreFixture {
 
   public StoreId createStore(UnaryOperator<CreateStoreSpecification> customizer) {
     var specification = customizer.apply(defaultCreateStoreSpecification());
-    var storeAggregate = specification.toStoreAggregate();
-    return storeAggregatePort.save(storeAggregate)
-        .onItem().transform(success -> storeAggregate.id())
-        .await().atMost(Duration.ofSeconds(10L));
+    var response = RestAssured.given()
+        .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+        .body(specification.toCreateStoreRequest())
+        .when().post("/stores")
+        .thenReturn();
+
+    assertThat(response.statusCode()).isEqualTo(Status.CREATED.getStatusCode());
+    var createStoreResponse = response.body().as(CreateStoreResponse.class);
+    return new StoreId(UUID.fromString(createStoreResponse.id()));
   }
 
   public void updateStoreProductAvailability(StoreId storeId) {
@@ -124,11 +119,10 @@ public class StoreFixture {
       AddressSpecification address
   ) {
 
-    public StoreAggregate toStoreAggregate() {
-      return new StoreAggregate(
-          new StoreId(UUID.fromString(storeId)),
-          new StoreCode("STORE_1"),
-          address.toAddress()
+    public CreateStoreRequest toCreateStoreRequest() {
+      return new CreateStoreRequest(
+          code,
+          address.toAddressDto()
       );
     }
 
@@ -143,12 +137,12 @@ public class StoreFixture {
       String country
   ) {
 
-    public Address toAddress() {
-      return new Address(
-          street.toStreet(),
-          new City(city),
-          new ZipCode(zipCode),
-          new Country(CountryCode.of(country))
+    public AddressDto toAddressDto() {
+      return new AddressDto(
+          Option.of(street).map(StreetSpecification::toStreetDto).filter(Objects::nonNull),
+          Option.of(city),
+          Option.of(zipCode),
+          country
       );
     }
   }
@@ -161,11 +155,11 @@ public class StoreFixture {
       String flatNo
   ) {
 
-    public Street toStreet() {
-      return new Street(
-          new StreetName(name),
-          new HouseNo(houseNo),
-          Option.of(flatNo).map(FlatNo::new)
+    public StreetDto toStreetDto() {
+      return new StreetDto(
+          name,
+          houseNo,
+          Option.of(flatNo)
       );
     }
   }

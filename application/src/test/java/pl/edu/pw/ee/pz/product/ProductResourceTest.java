@@ -19,7 +19,8 @@ import java.util.stream.IntStream;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 import pl.edu.pw.ee.pz.product.port.ProductAggregatePort;
-import pl.edu.pw.ee.pz.shared.Attribute;
+import pl.edu.pw.ee.pz.shared.AttributeDto.IntegerAttributeValueDto;
+import pl.edu.pw.ee.pz.shared.AttributeDto.StringAttributeValueDto;
 import pl.edu.pw.ee.pz.shared.ProductDto;
 import pl.edu.pw.ee.pz.shared.Variation;
 import pl.edu.pw.ee.pz.sharedkernel.model.ProductId;
@@ -244,12 +245,12 @@ class ProductResourceTest {
                 .hasSize(2)
                 .anySatisfy(attribute -> {
                   assertThat(attribute.type()).isEqualTo("SIZE_EU");
-                  assertThat(attribute.value()).isInstanceOf(Attribute.IntegerAttributeValue.class);
+                  assertThat(attribute.value()).isInstanceOf(IntegerAttributeValueDto.class);
                   assertThat(attribute.value().value()).isEqualTo(38);
                 })
                 .anySatisfy(attribute -> {
                   assertThat(attribute.type()).isEqualTo("COLORS");
-                  assertThat(attribute.value()).isInstanceOf(Attribute.StringAttributeValue.class);
+                  assertThat(attribute.value()).isInstanceOf(StringAttributeValueDto.class);
                   assertThat(attribute.value().value()).isEqualTo("BROWN_WHITE");
                 })
         )
@@ -258,12 +259,12 @@ class ProductResourceTest {
                 .hasSize(2)
                 .anySatisfy(attribute -> {
                   assertThat(attribute.type()).isEqualTo("SIZE_EU");
-                  assertThat(attribute.value()).isInstanceOf(Attribute.IntegerAttributeValue.class);
+                  assertThat(attribute.value()).isInstanceOf(IntegerAttributeValueDto.class);
                   assertThat(attribute.value().value()).isEqualTo(40);
                 })
                 .anySatisfy(attribute -> {
                   assertThat(attribute.type()).isEqualTo("COLORS");
-                  assertThat(attribute.value()).isInstanceOf(Attribute.StringAttributeValue.class);
+                  assertThat(attribute.value()).isInstanceOf(StringAttributeValueDto.class);
                   assertThat(attribute.value().value()).isEqualTo("RED_BLUE");
                 })
         );

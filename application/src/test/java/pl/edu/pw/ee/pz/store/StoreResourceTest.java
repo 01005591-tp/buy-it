@@ -4,16 +4,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
-import io.restassured.RestAssured;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.core.HttpHeaders;
-import jakarta.ws.rs.core.MediaType;
 import java.time.Duration;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Predicate;
 import org.awaitility.Awaitility;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import pl.edu.pw.ee.pz.sharedkernel.model.Pieces;
 import pl.edu.pw.ee.pz.sharedkernel.model.ProductId;
@@ -32,6 +28,24 @@ class StoreResourceTest {
   StoreAggregatePort storeAggregatePort;
   @Inject
   StoreProjectionPort storeProjectionPort;
+
+  @Test
+  void should_create_store() {
+    // when
+    var storeId = storeFixture.createStore();
+
+    // then
+    var storeAggregate = storeAggregatePort.findById(storeId)
+        .await().atMost(Duration.ofSeconds(5L));
+    assertThat(storeAggregate.id()).isEqualTo(storeId);
+    assertThat(storeAggregate.code().value()).isEqualTo("STORE_1");
+    assertThat(storeAggregate.products()).isEmpty();
+    // and
+    var store = findStoreProjectionById(storeId, Objects::nonNull);
+    assertThat(store.id()).isEqualTo(storeId);
+    assertThat(store.code().value()).isEqualTo("STORE_1");
+    assertThat(store.products()).isEmpty();
+  }
 
   @Test
   void should_update_products_available_pieces() {
@@ -89,22 +103,6 @@ class StoreResourceTest {
                 assertThat(pieces.value()).isEqualTo(4L);
               });
         });
-  }
-
-  @Disabled("Logic not yet implemented")
-  @Test
-  void should_get_products_with_available_pieces() {
-    // given
-    var storeId = storeFixture.createStore();
-    storeFixture.updateStoreProductAvailability(storeId);
-
-    // when
-    var response = RestAssured.given()
-        .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-        .when().post("/stores/%s/products".formatted(storeId.value()))
-        .thenReturn();
-
-    throw new UnsupportedOperationException("Not yet implemented");
   }
 
   private Store findStoreProjectionById(StoreId id, Predicate<Store> predicate) {

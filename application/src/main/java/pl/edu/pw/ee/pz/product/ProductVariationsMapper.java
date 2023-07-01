@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import pl.edu.pw.ee.pz.shared.AttributeDto;
 import pl.edu.pw.ee.pz.shared.Variation;
 import pl.edu.pw.ee.pz.sharedkernel.model.ProductVariation;
 import pl.edu.pw.ee.pz.sharedkernel.model.ProductVariationId;
@@ -28,7 +29,7 @@ class ProductVariationsMapper {
   }
 
   private pl.edu.pw.ee.pz.sharedkernel.model.VariationAttribute<?, ?> toVariationAttribute(
-      pl.edu.pw.ee.pz.shared.Attribute<?, ?> attribute
+      AttributeDto<?, ?> attribute
   ) {
     return new pl.edu.pw.ee.pz.sharedkernel.model.VariationAttribute<>(
         new AttributeType(attribute.type()),

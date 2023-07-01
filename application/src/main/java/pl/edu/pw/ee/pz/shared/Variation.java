@@ -7,7 +7,7 @@ public record Variation(
     String id,
     // TODO: Must be raw type, because Jackson cannot serialize it properly otherwise
     //       Register custom Jackson serializer to serialize List<Attribute> properly.
-    List<Attribute> attributes
+    List<AttributeDto> attributes
 ) {
 
 }

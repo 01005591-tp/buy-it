@@ -13,4 +13,11 @@ public class StoreApplicationConfiguration {
   ) {
     return new UpdateProductsAvailablePiecesEndpoint(commandHandlerExecutor);
   }
+
+  @Produces
+  CreateStoreEndpoint createStoreEndpoint(
+      CommandHandlerExecutor commandHandlerExecutor
+  ) {
+    return new CreateStoreEndpoint(commandHandlerExecutor);
+  }
 }
