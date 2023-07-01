@@ -432,28 +432,51 @@ Otrzymano odpowiedź o statusie 200 OK wraz z danymi znalezionego produktu i inf
 
 [source,json]
 ----
-
 {
-"products": {
-"type": "Single", "value": {
-"id": "7a5cab46-2763-4841-a74d-45fe1b7ef313", "code": "AIR_MAX_PULSE", "brandId": "04abd190-656e-45e5-827a-0c8a426af8f7", "variations": [
-{
-"id": "fbba4116-c416-4d04-bc1c-414e44ef785a", "attributes": [
-{
-"type": "COLOR_1", "value": {
-"type": "String", "value": "WHITE" } },
-{
-"type": "COLOR_2", "value": {
-"type": "String", "value": "STEEL_GREY" } },
-{
-"type": "SIZE_EU", "value": {
-"type": "Integer", "value": 36 } }
-]
+    "products": {
+        "type": "Single",
+        "value": {
+            "id": "7a5cab46-2763-4841-a74d-45fe1b7ef313",
+            "code": "AIR_MAX_PULSE",
+            "brandId": "04abd190-656e-45e5-827a-0c8a426af8f7",
+            "variations": [
+                {
+                    "id": "fbba4116-c416-4d04-bc1c-414e44ef785a",
+                    "attributes": [
+                        {
+                            "type": "COLOR_1",
+                            "value": {
+                                "type": "String",
+                                "value": "WHITE"
+                            }
+                        },
+                        {
+                            "type": "COLOR_2",
+                            "value": {
+                                "type": "String",
+                                "value": "STEEL_GREY"
+                            }
+                        },
+                        {
+                            "type": "SIZE_EU",
+                            "value": {
+                                "type": "Integer",
+                                "value": 36
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        "pageCount": 1,
+        "page": {
+            "size": 1,
+            "prevKeySetId": 0,
+            "nextKeySetId": 0
+        },
+        "itemsCount": 1
+    }
 }
-]
-}, "pageCount": 1, "page": {
-"size": 1, "prevKeySetId": 0, "nextKeySetId": 0 }, "itemsCount": 1 } }
-
 ----
 
 [#aktualny-stan-projektu_buy-it-be_testy-api_stan-aplikacji-po-testach]
