@@ -20,4 +20,10 @@ check-versions:
 	./mvnw versions:display-dependency-updates
 
 local-infra-up:
-	docker compose -f local/docker-compose.yml up -d
+	${PROJECT_ROOT_DIR}/local/local-infra.sh -u
+
+local-infra-stop:
+	${PROJECT_ROOT_DIR}/local/local-infra.sh -s
+
+local-infra-down:
+	${PROJECT_ROOT_DIR}/local/local-infra.sh -d
