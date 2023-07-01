@@ -22,6 +22,7 @@ class KafkaProjectionListener {
 
   @Incoming("domain-events-in")
   public CompletionStage<Void> consumeDomainEvent(KafkaRecordBatch<String, byte[]> records) {
+    // TODO: ensure consumer idempotence (do not change projection based on the same event more than once)
     return StreamSupport.stream(records.spliterator(), false)
         .map(this::execute)
         .reduce(

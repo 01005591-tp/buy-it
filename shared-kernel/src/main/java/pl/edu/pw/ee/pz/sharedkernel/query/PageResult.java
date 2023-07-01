@@ -143,6 +143,7 @@ public sealed interface PageResult<T> {
       ResultPage page,
       long pageCount,
       long itemsCount,
+      @JsonProperty
       List<T> value
   ) implements PageResult<T> {
 
@@ -152,6 +153,7 @@ public sealed interface PageResult<T> {
   final class SinglePageResult<T> implements PageResult<T> {
 
 
+    @JsonProperty
     @Getter
     @Accessors(fluent = true)
     private final T value;

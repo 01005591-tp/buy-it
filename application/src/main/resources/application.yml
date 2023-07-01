@@ -28,7 +28,7 @@ mp:
         batch: true
         auto:
           offset:
-            reset: earliest
+            reset: latest
         enable:
           auto:
             commit: false
@@ -81,7 +81,7 @@ domain-events:
       tls: true
   minio:
     client:
-      uri: "http://192.168.49.2:31932"
+      uri: "http://localhost:19000"
       access-key: "admin"
       secret-key: "changeit"
 
