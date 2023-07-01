@@ -478,6 +478,22 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#aktualny-stan-projektu_buy-it-be">2.1. Buy It BE</a>
 <ul class="sectlevel3">
 <li><a href="#aktualny-stan-projektu_buy-it-be_uruchomienie-lokalnie">2.1.1. Uruchomienie lokalnie</a></li>
+<li><a href="#aktualny-stan-projektu_buy-it-be_testy-api">2.1.2. Testy API</a>
+<ul class="sectlevel4">
+<li><a href="#aktualny-stan-projektu_buy-it-be_testy-api_utworzenie-marki">2.1.2.1. Utworzenie marki</a></li>
+<li><a href="#aktualny-stan-projektu_buy-it-be_testy-api_modyfikacja-kodu-marki">2.1.2.2. Modyfikacja kodu marki</a></li>
+<li><a href="#aktualny-stan-projektu_buy-it-be_testy-api_utworzenie-produktu">2.1.2.3. Utworzenie produktu</a></li>
+<li><a href="#aktualny-stan-projektu_buy-it-be_testy-api_modyfikacja-produktu">2.1.2.4. Modyfikacja produktu</a></li>
+<li><a href="#aktualny-stan-projektu_buy-it-be_testy-api_wyszukanie-produktu-po-id">2.1.2.5. Wyszukanie produktu po ID</a></li>
+<li><a href="#aktualny-stan-projektu_buy-it-be_testy-api_wyszukanie-produktu-po-kodzie">2.1.2.6. Wyszukanie produktu po kodzie</a></li>
+<li><a href="#aktualny-stan-projektu_buy-it-be_testy-api_stan-aplikacji-po-testach">2.1.2.7. Stan aplikacji po testach</a>
+<ul class="sectlevel5">
+<li><a href="#aktualny-stan-projektu_buy-it-be_testy-api_stan-aplikacji-po-testach_postgresql">2.1.2.7.1. PostgreSQL</a></li>
+<li><a href="#aktualny-stan-projektu_buy-it-be_testy-api_stan-aplikacji-po-testach_redpanda">2.1.2.7.2. Redpanda</a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -512,7 +528,7 @@ Klienci mogą za jej pomocą przeglądać i wyszukiwać produkty czy składać z
 </div>
 <div class="imageblock">
 <div class="content">
-<img src="diagrams/c2.png" alt="C2 level diagram.png">
+<img src="diagrams/c2.png" alt="c2">
 </div>
 <div class="title">Rysunek 1. Komponenty aplikacji Buy It - Level 2 modelu C4</div>
 </div>
@@ -828,6 +844,352 @@ Press [r] to resume testing, [o] Toggle test output, [:] for the terminal, [h] f
 <p>Po uruchomieniu aplikacji w ten sposób, dostępny jest panel developerski Quarkus pod adresem <a href="http://localhost:4000/q/dev-ui/extensions" class="bare">http://localhost:4000/q/dev-ui/extensions</a>.</p>
 </div>
 </div>
+<div class="sect3">
+<h4 id="aktualny-stan-projektu_buy-it-be_testy-api">2.1.2. Testy API</h4>
+<div class="paragraph">
+<p>W ramach aktualnego stanu projektu, wykonano proste manualne testy API z wykorzystaniem Swagger UI.</p>
+</div>
+<div class="sect4">
+<h5 id="aktualny-stan-projektu_buy-it-be_testy-api_utworzenie-marki">2.1.2.1. Utworzenie marki</h5>
+<div class="imageblock">
+<div class="content">
+<img src="images/create-brand-request.png" alt="create brand request">
+</div>
+<div class="title">Rysunek 2. Utworzenie marki - Swagger UI</div>
+</div>
+<div class="paragraph">
+<p>Wykonane żądanie odpowiada wywołaniu cURL:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="shell">curl -X 'POST' \
+  'http://localhost:4000/brands' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: multipart/form-data' \
+  -F 'logoImage={}' \
+  -F 'code=ADIDAS'</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Otrzymano odpowiedź o statusie 201 CREATED i ID utworzonej marki w treści:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="json">{
+  <span style="color:#606"><span style="color:#404">&quot;</span><span>id</span><span style="color:#404">&quot;</span></span>: <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">04abd190-656e-45e5-827a-0c8a426af8f7</span><span style="color:#710">&quot;</span></span>
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>W konsoli MinIO widzimy zapisane logo dla marki o tym samym ID:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="images/minio-brand-logo.png" alt="minio brand logo">
+</div>
+<div class="title">Rysunek 3. Logo marki - MinIO</div>
+</div>
+<div class="paragraph">
+<p>Logo ma 2 bajty, ponieważ w testach jako logo przestany został "string" <code>{}</code>.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="aktualny-stan-projektu_buy-it-be_testy-api_modyfikacja-kodu-marki">2.1.2.2. Modyfikacja kodu marki</h5>
+<div class="imageblock">
+<div class="content">
+<img src="images/update-brand-code.png" alt="update brand code">
+</div>
+<div class="title">Rysunek 4. Modyfikacja kodu marki - Swagger UI</div>
+</div>
+<div class="paragraph">
+<p>Wykonane żądanie odpowiada wywołaniu cURL:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="shell">curl -X 'PUT' \
+  'http://localhost:4000/brands/04abd190-656e-45e5-827a-0c8a426af8f7/code' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  &quot;code&quot;: &quot;NIKE&quot;
+}'</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Otrzymano odpowiedź o statusie 204 NO_CONTENT.</p>
+</div>
+<div class="paragraph">
+<p>W konsoli EventStoreDB (<a href="https://localhost:12113/" class="bare">https://localhost:12113/</a>) możemy zaobserwoać zdarzenia domenowe zarejestrowane dla marki:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="images/create-and-update-brand-events.png" alt="create and update brand events">
+</div>
+<div class="title">Rysunek 5. Zdarzenia dla marki - EventStoreDB</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="aktualny-stan-projektu_buy-it-be_testy-api_utworzenie-produktu">2.1.2.3. Utworzenie produktu</h5>
+<div class="imageblock">
+<div class="content">
+<img src="images/create-product.png" alt="create product">
+</div>
+<div class="title">Rysunek 6. Utworzenie produktu - Swagger UI</div>
+</div>
+<div class="paragraph">
+<p>Wykonane żądanie odpowiada wywołaniu cURL:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="shell">curl -X 'POST' \
+  'http://localhost:4000/products' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  &quot;code&quot;: &quot;AIR_MAX_PULSE&quot;,
+  &quot;brandId&quot;: &quot;04abd190-656e-45e5-827a-0c8a426af8f7&quot;,
+  &quot;variations&quot;: [
+    {
+      &quot;id&quot;: &quot;42009870-2248-4f82-84cb-7965c4a2b2ff&quot;,
+      &quot;attributes&quot;: [
+        {
+          &quot;type&quot;: &quot;SIZE_EU&quot;,
+          &quot;value&quot;: {
+            &quot;type&quot;: &quot;Integer&quot;,
+            &quot;value&quot;: 36
+          }
+        },
+        {
+          &quot;type&quot;: &quot;COLOR_1&quot;,
+          &quot;value&quot;: {
+            &quot;type&quot;: &quot;String&quot;,
+            &quot;value&quot;: &quot;WHITE&quot;
+          }
+        },
+        {
+          &quot;type&quot;: &quot;COLOR_2&quot;,
+          &quot;value&quot;: {
+            &quot;type&quot;: &quot;String&quot;,
+            &quot;value&quot;: &quot;GREY&quot;
+          }
+        }
+      ]
+    }
+  ]
+}'</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Otrzymano odpowiedź o statusie 201 CREATED wraz z ID produktu w treści:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="json">{
+  <span style="color:#606"><span style="color:#404">&quot;</span><span>id</span><span style="color:#404">&quot;</span></span>: <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">7a5cab46-2763-4841-a74d-45fe1b7ef313</span><span style="color:#710">&quot;</span></span>
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="aktualny-stan-projektu_buy-it-be_testy-api_modyfikacja-produktu">2.1.2.4. Modyfikacja produktu</h5>
+<div class="imageblock">
+<div class="content">
+<img src="images/create-product.png" alt="create product">
+</div>
+<div class="title">Rysunek 7. Utworzenie produktu - Swagger UI</div>
+</div>
+<div class="paragraph">
+<p>Wykonane żądanie odpowiada wywołaniu cURL (zmiana "COLOR_2" na "STEEL_GRAY"):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="shell">curl -X 'PUT' \
+  'http://localhost:4000/products/7a5cab46-2763-4841-a74d-45fe1b7ef313' \
+  -H 'accept: */*' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    &quot;code&quot;: &quot;AIR_MAX_PULSE&quot;,
+    &quot;brandId&quot;: &quot;04abd190-656e-45e5-827a-0c8a426af8f7&quot;,
+    &quot;variations&quot;: [
+      {
+        &quot;id&quot;: &quot;d9f82ef7-95c9-4b42-b724-10589aceb2d4&quot;,
+        &quot;attributes&quot;: [
+          {
+            &quot;type&quot;: &quot;COLOR_1&quot;,
+            &quot;value&quot;: {
+              &quot;type&quot;: &quot;String&quot;,
+              &quot;value&quot;: &quot;WHITE&quot;
+            }
+          },
+          {
+            &quot;type&quot;: &quot;COLOR_2&quot;,
+            &quot;value&quot;: {
+              &quot;type&quot;: &quot;String&quot;,
+              &quot;value&quot;: &quot;STEEL_GREY&quot;
+            }
+          },
+          {
+            &quot;type&quot;: &quot;SIZE_EU&quot;,
+            &quot;value&quot;: {
+              &quot;type&quot;: &quot;Integer&quot;,
+              &quot;value&quot;: 36
+            }
+          }
+        ]
+      }
+    ]
+  }'</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Otrzymano odpowiedź o statusie 204 NO_CONTENT.</p>
+</div>
+<div class="paragraph">
+<p>W konsoli EventStoreDB (<a href="https://localhost:12113/" class="bare">https://localhost:12113/</a>) możemy zaobserwoać zdarzenia domenowe zarejestrowane dla produktu:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="images/create-and-update-product-events.png" alt="create and update product events">
+</div>
+<div class="title">Rysunek 8. Zdarzenia dla produktu - EventStoreDB</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="aktualny-stan-projektu_buy-it-be_testy-api_wyszukanie-produktu-po-id">2.1.2.5. Wyszukanie produktu po ID</h5>
+<div class="imageblock">
+<div class="content">
+<img src="images/get-product-by-id.png" alt="get product by id">
+</div>
+<div class="title">Rysunek 9. Wyszukanie produktu po ID - Swagger UI</div>
+</div>
+<div class="paragraph">
+<p>Wykonane żądanie odpowiada wywołaniu cURL:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="shell">curl -X 'GET' \
+  'http://localhost:4000/products/7a5cab46-2763-4841-a74d-45fe1b7ef313' \
+  -H 'accept: application/json'</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Otrzymano odpowiedź o statusie 200 OK wraz z danymi znalezionego produktu:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="json">{
+  <span style="color:#606"><span style="color:#404">&quot;</span><span>product</span><span style="color:#404">&quot;</span></span>: {
+    <span style="color:#606"><span style="color:#404">&quot;</span><span>id</span><span style="color:#404">&quot;</span></span>: <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">7a5cab46-2763-4841-a74d-45fe1b7ef313</span><span style="color:#710">&quot;</span></span>,
+    <span style="color:#606"><span style="color:#404">&quot;</span><span>code</span><span style="color:#404">&quot;</span></span>: <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">AIR_MAX_PULSE</span><span style="color:#710">&quot;</span></span>,
+    <span style="color:#606"><span style="color:#404">&quot;</span><span>brandId</span><span style="color:#404">&quot;</span></span>: <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">04abd190-656e-45e5-827a-0c8a426af8f7</span><span style="color:#710">&quot;</span></span>,
+    <span style="color:#606"><span style="color:#404">&quot;</span><span>variations</span><span style="color:#404">&quot;</span></span>: [
+      {
+        <span style="color:#606"><span style="color:#404">&quot;</span><span>id</span><span style="color:#404">&quot;</span></span>: <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">d9f82ef7-95c9-4b42-b724-10589aceb2d4</span><span style="color:#710">&quot;</span></span>,
+        <span style="color:#606"><span style="color:#404">&quot;</span><span>attributes</span><span style="color:#404">&quot;</span></span>: [
+          {
+            <span style="color:#606"><span style="color:#404">&quot;</span><span>type</span><span style="color:#404">&quot;</span></span>: <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">COLOR_1</span><span style="color:#710">&quot;</span></span>,
+            <span style="color:#606"><span style="color:#404">&quot;</span><span>value</span><span style="color:#404">&quot;</span></span>: {
+              <span style="color:#606"><span style="color:#404">&quot;</span><span>type</span><span style="color:#404">&quot;</span></span>: <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">String</span><span style="color:#710">&quot;</span></span>,
+              <span style="color:#606"><span style="color:#404">&quot;</span><span>value</span><span style="color:#404">&quot;</span></span>: <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">WHITE</span><span style="color:#710">&quot;</span></span>
+            }
+          },
+          {
+            <span style="color:#606"><span style="color:#404">&quot;</span><span>type</span><span style="color:#404">&quot;</span></span>: <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">COLOR_2</span><span style="color:#710">&quot;</span></span>,
+            <span style="color:#606"><span style="color:#404">&quot;</span><span>value</span><span style="color:#404">&quot;</span></span>: {
+              <span style="color:#606"><span style="color:#404">&quot;</span><span>type</span><span style="color:#404">&quot;</span></span>: <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">String</span><span style="color:#710">&quot;</span></span>,
+              <span style="color:#606"><span style="color:#404">&quot;</span><span>value</span><span style="color:#404">&quot;</span></span>: <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">GREY</span><span style="color:#710">&quot;</span></span>
+            }
+          },
+          {
+            <span style="color:#606"><span style="color:#404">&quot;</span><span>type</span><span style="color:#404">&quot;</span></span>: <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">SIZE_EU</span><span style="color:#710">&quot;</span></span>,
+            <span style="color:#606"><span style="color:#404">&quot;</span><span>value</span><span style="color:#404">&quot;</span></span>: {
+              <span style="color:#606"><span style="color:#404">&quot;</span><span>type</span><span style="color:#404">&quot;</span></span>: <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">Integer</span><span style="color:#710">&quot;</span></span>,
+              <span style="color:#606"><span style="color:#404">&quot;</span><span>value</span><span style="color:#404">&quot;</span></span>: <span style="color:#00D">36</span>
+            }
+          }
+        ]
+      }
+    ]
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="aktualny-stan-projektu_buy-it-be_testy-api_wyszukanie-produktu-po-kodzie">2.1.2.6. Wyszukanie produktu po kodzie</h5>
+<div class="imageblock">
+<div class="content">
+<img src="images/get-product-by-basic-details.png" alt="get product by basic details">
+</div>
+<div class="title">Rysunek 10. Wyszukanie produktu po kodzie - Swagger UI</div>
+</div>
+<div class="paragraph">
+<p>Wykonane żądanie odpowiada wywołaniu cURL:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="shell">curl -X 'GET' \ 'http://localhost:4000/products?code=AIR_MAX' \ -H 'accept: application/json'</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Otrzymano odpowiedź o statusie 200 OK wraz z danymi znalezionego produktu i informacją dot. paginacji:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="json">{
+<span style="color:#606"><span style="color:#404">&quot;</span><span>products</span><span style="color:#404">&quot;</span></span>: {
+<span style="color:#606"><span style="color:#404">&quot;</span><span>type</span><span style="color:#404">&quot;</span></span>: <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">Single</span><span style="color:#710">&quot;</span></span>, <span style="color:#606"><span style="color:#404">&quot;</span><span>value</span><span style="color:#404">&quot;</span></span>: {
+<span style="color:#606"><span style="color:#404">&quot;</span><span>id</span><span style="color:#404">&quot;</span></span>: <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">7a5cab46-2763-4841-a74d-45fe1b7ef313</span><span style="color:#710">&quot;</span></span>, <span style="color:#606"><span style="color:#404">&quot;</span><span>code</span><span style="color:#404">&quot;</span></span>: <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">AIR_MAX_PULSE</span><span style="color:#710">&quot;</span></span>, <span style="color:#606"><span style="color:#404">&quot;</span><span>brandId</span><span style="color:#404">&quot;</span></span>: <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">04abd190-656e-45e5-827a-0c8a426af8f7</span><span style="color:#710">&quot;</span></span>, <span style="color:#606"><span style="color:#404">&quot;</span><span>variations</span><span style="color:#404">&quot;</span></span>: [
+{
+<span style="color:#606"><span style="color:#404">&quot;</span><span>id</span><span style="color:#404">&quot;</span></span>: <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">fbba4116-c416-4d04-bc1c-414e44ef785a</span><span style="color:#710">&quot;</span></span>, <span style="color:#606"><span style="color:#404">&quot;</span><span>attributes</span><span style="color:#404">&quot;</span></span>: [
+{
+<span style="color:#606"><span style="color:#404">&quot;</span><span>type</span><span style="color:#404">&quot;</span></span>: <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">COLOR_1</span><span style="color:#710">&quot;</span></span>, <span style="color:#606"><span style="color:#404">&quot;</span><span>value</span><span style="color:#404">&quot;</span></span>: {
+<span style="color:#606"><span style="color:#404">&quot;</span><span>type</span><span style="color:#404">&quot;</span></span>: <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">String</span><span style="color:#710">&quot;</span></span>, <span style="color:#606"><span style="color:#404">&quot;</span><span>value</span><span style="color:#404">&quot;</span></span>: <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">WHITE</span><span style="color:#710">&quot;</span></span> } },
+{
+<span style="color:#606"><span style="color:#404">&quot;</span><span>type</span><span style="color:#404">&quot;</span></span>: <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">COLOR_2</span><span style="color:#710">&quot;</span></span>, <span style="color:#606"><span style="color:#404">&quot;</span><span>value</span><span style="color:#404">&quot;</span></span>: {
+<span style="color:#606"><span style="color:#404">&quot;</span><span>type</span><span style="color:#404">&quot;</span></span>: <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">String</span><span style="color:#710">&quot;</span></span>, <span style="color:#606"><span style="color:#404">&quot;</span><span>value</span><span style="color:#404">&quot;</span></span>: <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">STEEL_GREY</span><span style="color:#710">&quot;</span></span> } },
+{
+<span style="color:#606"><span style="color:#404">&quot;</span><span>type</span><span style="color:#404">&quot;</span></span>: <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">SIZE_EU</span><span style="color:#710">&quot;</span></span>, <span style="color:#606"><span style="color:#404">&quot;</span><span>value</span><span style="color:#404">&quot;</span></span>: {
+<span style="color:#606"><span style="color:#404">&quot;</span><span>type</span><span style="color:#404">&quot;</span></span>: <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">Integer</span><span style="color:#710">&quot;</span></span>, <span style="color:#606"><span style="color:#404">&quot;</span><span>value</span><span style="color:#404">&quot;</span></span>: <span style="color:#00D">36</span> } }
+]
+}
+]
+}, <span style="color:#606"><span style="color:#404">&quot;</span><span>pageCount</span><span style="color:#404">&quot;</span></span>: <span style="color:#00D">1</span>, <span style="color:#606"><span style="color:#404">&quot;</span><span>page</span><span style="color:#404">&quot;</span></span>: {
+<span style="color:#606"><span style="color:#404">&quot;</span><span>size</span><span style="color:#404">&quot;</span></span>: <span style="color:#00D">1</span>, <span style="color:#606"><span style="color:#404">&quot;</span><span>prevKeySetId</span><span style="color:#404">&quot;</span></span>: <span style="color:#00D">0</span>, <span style="color:#606"><span style="color:#404">&quot;</span><span>nextKeySetId</span><span style="color:#404">&quot;</span></span>: <span style="color:#00D">0</span> }, <span style="color:#606"><span style="color:#404">&quot;</span><span>itemsCount</span><span style="color:#404">&quot;</span></span>: <span style="color:#00D">1</span> } }</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="aktualny-stan-projektu_buy-it-be_testy-api_stan-aplikacji-po-testach">2.1.2.7. Stan aplikacji po testach</h5>
+<div class="paragraph">
+<p>Po wykonanych w/w testach, możemy zweryfikować stan danych w bazie danych PostgreSQL oraz przesłane zdarzenia w Redpanda.</p>
+</div>
+<div class="sect5">
+<h6 id="aktualny-stan-projektu_buy-it-be_testy-api_stan-aplikacji-po-testach_postgresql">2.1.2.7.1. PostgreSQL</h6>
+<div class="imageblock">
+<div class="content">
+<img src="images/projections-after-actions.png" alt="projections after actions">
+</div>
+<div class="title">Rysunek 11. Projekcje po testach - PostgreSQL</div>
+</div>
+<div class="paragraph">
+<p>Na powyższym rysunku możemy zaobserwować, utworzony produkt, markę oraz aktualne atrybuty produktu.</p>
+</div>
+</div>
+<div class="sect5">
+<h6 id="aktualny-stan-projektu_buy-it-be_testy-api_stan-aplikacji-po-testach_redpanda">2.1.2.7.2. Redpanda</h6>
+<div class="paragraph">
+<p>Korzystając z konsoli Webowej Redpanda (<a href="http://localhost:18080/topics/domain-events" class="bare">http://localhost:18080/topics/domain-events</a>]), możemy podejrzeć przesłane zdarzenia w ramach naszych testów:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="images/redpanda-events.png" alt="redpanda events">
+</div>
+<div class="title">Rysunek 12. Zdarzenia po testach - Redpanda</div>
+</div>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -835,7 +1197,7 @@ Press [r] to resume testing, [o] Toggle test output, [:] for the terminal, [h] f
 <div id="footer">
 <div id="footer-text">
 Wersja 0.0.1<br>
-Ostatnio zmodyfikowany 2023-07-01 15:16:12 +0200
+Ostatnio zmodyfikowany 2023-07-01 17:01:54 +0200
 </div>
 </div>
 </body>
