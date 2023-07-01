@@ -106,7 +106,7 @@ Posiada API kompatybilne z link:https://aws.amazon.com/s3/[AWS S3].
 Posiada API kompatybilne z link:https://kafka.apache.org[Apache Kafka].
 
 [#architektura-projektu_komponenty_backend_buy-it-be]
-==== Buy It BE
+===== Buy It BE
 
 Jest to główny komponent backendowy systemu.
 W tym komponencie zaimplementowana została logika biznesowa części backendowej sklepu.
