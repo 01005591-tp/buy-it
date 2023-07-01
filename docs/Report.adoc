@@ -23,7 +23,7 @@ Aplikacja "Buy It Web Admin" dostępna jest tylko dla zweryfikowanych pracownik�
 
 Na rysunku poniżej przedstawiono diagram komponentów wykorzystywanych przez aplikację.
 
-image::diagrams/c2.png[C2 level diagram.png,title="Komponenty aplikacji Buy It - Level 2 modelu C4"]
+image::diagrams/c2.png[title="Komponenty aplikacji Buy It - Level 2 modelu C4"]
 
 Powyższy diagram przygotowany został z wykorzystniem link:https://c4model.com/#ContainerDiagram[C4 model - level 2].
 
@@ -188,3 +188,289 @@ Press [r] to resume testing, [o] Toggle test output, [:] for the terminal, [h] f
 ----
 
 Po uruchomieniu aplikacji w ten sposób, dostępny jest panel developerski Quarkus pod adresem link:http://localhost:4000/q/dev-ui/extensions[].
+
+[#aktualny-stan-projektu_buy-it-be_testy-api]
+==== Testy API
+
+W ramach aktualnego stanu projektu, wykonano proste manualne testy API z wykorzystaniem Swagger UI.
+
+[#aktualny-stan-projektu_buy-it-be_testy-api_utworzenie-marki]
+===== Utworzenie marki
+
+image::images/create-brand-request.png[title="Utworzenie marki - Swagger UI"]
+
+Wykonane żądanie odpowiada wywołaniu cURL:
+
+[source,shell]
+----
+curl -X 'POST' \
+  'http://localhost:4000/brands' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: multipart/form-data' \
+  -F 'logoImage={}' \
+  -F 'code=ADIDAS'
+----
+
+Otrzymano odpowiedź o statusie 201 CREATED i ID utworzonej marki w treści:
+
+[source,json]
+----
+{
+  "id": "04abd190-656e-45e5-827a-0c8a426af8f7"
+}
+----
+
+W konsoli MinIO widzimy zapisane logo dla marki o tym samym ID:
+
+image::images/minio-brand-logo.png[title="Logo marki - MinIO"]
+
+Logo ma 2 bajty, ponieważ w testach jako logo przestany został "string" `{}`.
+
+[#aktualny-stan-projektu_buy-it-be_testy-api_modyfikacja-kodu-marki]
+===== Modyfikacja kodu marki
+
+image::images/update-brand-code.png[title="Modyfikacja kodu marki - Swagger UI"]
+
+Wykonane żądanie odpowiada wywołaniu cURL:
+
+[source,shell]
+----
+curl -X 'PUT' \
+  'http://localhost:4000/brands/04abd190-656e-45e5-827a-0c8a426af8f7/code' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "code": "NIKE"
+}'
+----
+
+Otrzymano odpowiedź o statusie 204 NO_CONTENT.
+
+W konsoli EventStoreDB (link:https://localhost:12113/[]) możemy zaobserwoać zdarzenia domenowe zarejestrowane dla marki:
+
+image::images/create-and-update-brand-events.png[title="Zdarzenia dla marki - EventStoreDB"]
+
+[#aktualny-stan-projektu_buy-it-be_testy-api_utworzenie-produktu]
+===== Utworzenie produktu
+
+image::images/create-product.png[title="Utworzenie produktu - Swagger UI"]
+
+Wykonane żądanie odpowiada wywołaniu cURL:
+
+[source,shell]
+----
+curl -X 'POST' \
+  'http://localhost:4000/products' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "code": "AIR_MAX_PULSE",
+  "brandId": "04abd190-656e-45e5-827a-0c8a426af8f7",
+  "variations": [
+    {
+      "id": "42009870-2248-4f82-84cb-7965c4a2b2ff",
+      "attributes": [
+        {
+          "type": "SIZE_EU",
+          "value": {
+            "type": "Integer",
+            "value": 36
+          }
+        },
+        {
+          "type": "COLOR_1",
+          "value": {
+            "type": "String",
+            "value": "WHITE"
+          }
+        },
+        {
+          "type": "COLOR_2",
+          "value": {
+            "type": "String",
+            "value": "GREY"
+          }
+        }
+      ]
+    }
+  ]
+}'
+----
+
+Otrzymano odpowiedź o statusie 201 CREATED wraz z ID produktu w treści:
+
+[source,json]
+----
+{
+  "id": "7a5cab46-2763-4841-a74d-45fe1b7ef313"
+}
+----
+
+[#aktualny-stan-projektu_buy-it-be_testy-api_modyfikacja-produktu]
+===== Modyfikacja produktu
+
+image::images/create-product.png[title="Utworzenie produktu - Swagger UI"]
+
+Wykonane żądanie odpowiada wywołaniu cURL (zmiana "COLOR_2" na "STEEL_GRAY"):
+
+[source,shell]
+----
+curl -X 'PUT' \
+  'http://localhost:4000/products/7a5cab46-2763-4841-a74d-45fe1b7ef313' \
+  -H 'accept: */*' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "code": "AIR_MAX_PULSE",
+    "brandId": "04abd190-656e-45e5-827a-0c8a426af8f7",
+    "variations": [
+      {
+        "id": "d9f82ef7-95c9-4b42-b724-10589aceb2d4",
+        "attributes": [
+          {
+            "type": "COLOR_1",
+            "value": {
+              "type": "String",
+              "value": "WHITE"
+            }
+          },
+          {
+            "type": "COLOR_2",
+            "value": {
+              "type": "String",
+              "value": "STEEL_GREY"
+            }
+          },
+          {
+            "type": "SIZE_EU",
+            "value": {
+              "type": "Integer",
+              "value": 36
+            }
+          }
+        ]
+      }
+    ]
+  }'
+----
+
+Otrzymano odpowiedź o statusie 204 NO_CONTENT.
+
+W konsoli EventStoreDB (link:https://localhost:12113/[]) możemy zaobserwoać zdarzenia domenowe zarejestrowane dla produktu:
+
+image::images/create-and-update-product-events.png[title="Zdarzenia dla produktu - EventStoreDB"]
+
+[#aktualny-stan-projektu_buy-it-be_testy-api_wyszukanie-produktu-po-id]
+===== Wyszukanie produktu po ID
+
+image::images/get-product-by-id.png[title="Wyszukanie produktu po ID - Swagger UI"]
+
+Wykonane żądanie odpowiada wywołaniu cURL:
+
+[source,shell]
+----
+curl -X 'GET' \
+  'http://localhost:4000/products/7a5cab46-2763-4841-a74d-45fe1b7ef313' \
+  -H 'accept: application/json'
+----
+
+Otrzymano odpowiedź o statusie 200 OK wraz z danymi znalezionego produktu:
+
+[source,json]
+----
+{
+  "product": {
+    "id": "7a5cab46-2763-4841-a74d-45fe1b7ef313",
+    "code": "AIR_MAX_PULSE",
+    "brandId": "04abd190-656e-45e5-827a-0c8a426af8f7",
+    "variations": [
+      {
+        "id": "d9f82ef7-95c9-4b42-b724-10589aceb2d4",
+        "attributes": [
+          {
+            "type": "COLOR_1",
+            "value": {
+              "type": "String",
+              "value": "WHITE"
+            }
+          },
+          {
+            "type": "COLOR_2",
+            "value": {
+              "type": "String",
+              "value": "GREY"
+            }
+          },
+          {
+            "type": "SIZE_EU",
+            "value": {
+              "type": "Integer",
+              "value": 36
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
+----
+
+[#aktualny-stan-projektu_buy-it-be_testy-api_wyszukanie-produktu-po-kodzie]
+===== Wyszukanie produktu po kodzie
+
+image::images/get-product-by-basic-details.png[title="Wyszukanie produktu po kodzie - Swagger UI"]
+
+Wykonane żądanie odpowiada wywołaniu cURL:
+
+[source,shell]
+----
+
+curl -X 'GET' \ 'http://localhost:4000/products?code=AIR_MAX' \ -H 'accept: application/json'
+
+----
+
+Otrzymano odpowiedź o statusie 200 OK wraz z danymi znalezionego produktu i informacją dot. paginacji:
+
+[source,json]
+----
+
+{
+"products": {
+"type": "Single", "value": {
+"id": "7a5cab46-2763-4841-a74d-45fe1b7ef313", "code": "AIR_MAX_PULSE", "brandId": "04abd190-656e-45e5-827a-0c8a426af8f7", "variations": [
+{
+"id": "fbba4116-c416-4d04-bc1c-414e44ef785a", "attributes": [
+{
+"type": "COLOR_1", "value": {
+"type": "String", "value": "WHITE" } },
+{
+"type": "COLOR_2", "value": {
+"type": "String", "value": "STEEL_GREY" } },
+{
+"type": "SIZE_EU", "value": {
+"type": "Integer", "value": 36 } }
+]
+}
+]
+}, "pageCount": 1, "page": {
+"size": 1, "prevKeySetId": 0, "nextKeySetId": 0 }, "itemsCount": 1 } }
+
+----
+
+[#aktualny-stan-projektu_buy-it-be_testy-api_stan-aplikacji-po-testach]
+===== Stan aplikacji po testach
+
+Po wykonanych w/w testach, możemy zweryfikować stan danych w bazie danych PostgreSQL oraz przesłane zdarzenia w Redpanda.
+
+[#aktualny-stan-projektu_buy-it-be_testy-api_stan-aplikacji-po-testach_postgresql]
+====== PostgreSQL
+
+image::images/projections-after-actions.png[title="Projekcje po testach - PostgreSQL"]
+
+Na powyższym rysunku możemy zaobserwować, utworzony produkt, markę oraz aktualne atrybuty produktu.
+
+[#aktualny-stan-projektu_buy-it-be_testy-api_stan-aplikacji-po-testach_redpanda]
+====== Redpanda
+
+Korzystając z konsoli Webowej Redpanda (link:http://localhost:18080/topics/domain-events[]]), możemy podejrzeć przesłane zdarzenia w ramach naszych testów:
+
+image::images/redpanda-events.png[title="Zdarzenia po testach - Redpanda"]
