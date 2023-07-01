@@ -1,0 +1,77 @@
+@startuml
+
+'left to right direction
+skinparam defaultTextAlignment center
+
+actor "Klient" as customer
+actor "Operator zamówień" as order_operator
+actor "Operator magazynu" as store_operator
+actor "Administrator" as admin
+
+package "Frontend Public" as frontend {
+  node buy_it_web [
+    Buy It Web
+    Nginx
+    Aplikacja webowa TypeScript + React.
+  ]
+}
+
+package "Frontend VPN" as frontend_vpn {
+  node buy_it_backoffice_web [
+    Buy It Web Admin
+    Nginx
+    Aplikacja webowa TypeScript + React.
+  ]
+}
+
+package "Backend" as backend {
+  node buy_it_be [
+    Buy It BE
+    Aplikacja backendowa Java + Quarkus.
+  ]
+
+  package "Private / local network only" as backend_internal {
+    database postgres [
+      PostgreSQL
+      Projekcje i widoki.
+      Wykorzystywana głównie do modeli do odczytu (read model).
+    ]
+    database event_store_db [
+      EventStore DB
+      Baza do przechowywania zdarzeń, które wystąpiły
+      w agregatach. Źródło danych dla "Event sourcing".
+    ]
+    database minio [
+      MinIO
+      Baza plikowa do przchowywania plików (np. zdjęć).
+      API kompatibylne z AWS S3.
+    ]
+    node redpanda [
+      Redpanda
+      Baza typu "event store".
+      Wykorzystywana do publikacji zdarzeń przetwarzanych przez
+      poszczególne elementy systemu (np. projekcje).
+      API kompatibylne z Apache Kafka.
+    ]
+  }
+}
+
+interface "WebBrowser" as buy_it_web_interface
+buy_it_web -u- buy_it_web_interface
+customer .d.> buy_it_web_interface
+
+interface "WebBrowser" as buy_it_backoffice_web_interface
+buy_it_backoffice_web -u- buy_it_backoffice_web_interface
+order_operator .d.> buy_it_backoffice_web_interface
+store_operator .d.> buy_it_backoffice_web_interface
+admin .d.> buy_it_backoffice_web_interface
+
+buy_it_be <-u- buy_it_web : "HTTP / REST"
+buy_it_be <-u- buy_it_backoffice_web : "HTTP / REST"
+
+event_store_db <-u- buy_it_be : "gRPC"
+postgres <-u- buy_it_be : "TCP/JDBC"
+redpanda <-u- buy_it_be : "TCP/Kafka"
+minio <-u- buy_it_be : "TCP/S3"
+
+@enduml

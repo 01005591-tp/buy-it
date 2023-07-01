@@ -18,3 +18,6 @@ check-vulnerabilities:
 
 check-versions:
 	./mvnw versions:display-dependency-updates
+
+local-infra-up:
+	docker compose -f local/docker-compose.yml up -d
