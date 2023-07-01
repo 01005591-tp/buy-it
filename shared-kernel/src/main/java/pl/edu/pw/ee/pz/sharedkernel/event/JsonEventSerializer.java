@@ -30,6 +30,6 @@ public class JsonEventSerializer implements EventSerializer {
     var serializableEvent = jsonSerializer.deserialize(data, SerializableEvent.class);
     @SuppressWarnings("unchecked")
     var type = (Class<E>) serializableEvent.type();
-    return jsonSerializer.deserialize(serializableEvent.event(), type);
+    return (E) jsonSerializer.deserialize(serializableEvent.event(), type);
   }
 }
